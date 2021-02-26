@@ -65,7 +65,7 @@ async function starts() {
 
             const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
 
-            pesan = lol.message.conversation
+            pesan = type === 'conversation' ? lol.message.conversation : lol.message.extendedTextMessage.text
             body = (type === 'conversation' && pesan.startsWith(prefix)) ? pesan : (type == 'imageMessage') && lol.message.imageMessage.caption.startsWith(prefix) ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption.startsWith(prefix) ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text.startsWith(prefix) ? lol.message.extendedTextMessage.text : ''
             budy = (type === 'conversation') ? pesan : (type === 'extendedTextMessage') ? lol.message.extendedTextMessage.text : ''
             var Link = (type === 'conversation' && pesan) ? pesan : (type == 'imageMessage') && lol.message.imageMessage.caption ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text ? lol.message.extendedTextMessage.text : ''
@@ -105,10 +105,10 @@ async function starts() {
             const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
             const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
 
-            if (!isGroup && !isCmd) console.log(color(time, "white"), color("[ PRIVATE ]", "aqua"), pesan, "from", color(sender.split('@')[0], "yellow"))
-            if (isGroup && !isCmd) console.log(color(time, "white"), color("[  GROUP  ]", "aqua"), pesan, "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
-            if (isGroup && isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), pesan, "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
-            if (isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), pesan, "from", color(sender.split('@')[0], "yellow"))
+            if (!isGroup && !isCmd) console.log(color(time, "white"), color("[ PRIVATE ]", "aqua"), color(pesan, "white"), "from", color(sender.split('@')[0], "yellow"))
+            if (isGroup && !isCmd) console.log(color(time, "white"), color("[  GROUP  ]", "aqua"), color(pesan, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
+            if (isGroup && isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), color(pesan, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
+            if (isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), color(pesan, "white"), "from", color(sender.split('@')[0], "yellow"))
 
             switch (command) {
                 case 'help':
@@ -266,17 +266,81 @@ async function starts() {
                     buffer = await getBuffer(get_result.thumbnail)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
                     break
+                case 'otakudesu':
+                    url = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/otakudesu?apikey=${apikey}&url=${url}`)
+                    get_result = get_result.result
+                    txt = `Title : ${get_result.title}\n`
+                    txt += `Japanese : ${get_result.japanese}\n`
+                    txt += `Judul : ${get_result.judul}\n`
+                    txt += `Type : ${get_result.type}\n`
+                    txt += `Episode : ${get_result.episodes}\n`
+                    txt += `Aired : ${get_result.aired}\n`
+                    txt += `Producers : ${get_result.producers}\n`
+                    txt += `Genre : ${get_result.genres}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `Studios : ${get_result.status}\n`
+                    txt += `Rating : ${get_result.rating}\n`
+                    txt += `Credit : ${get_result.credit}\n`
+                    get_link = get_result.link_dl
+                    for (var x in get_link) {
+                        txt += `\n\n*${get_link[x].title}*\n`
+                        for (var y in get_link[x].link_dl) {
+                            info = get_link[x].link_dl[y]
+                            txt += `\n\`\`\`Reso : \`\`\`${info.reso}\n`
+                            txt += `\`\`\`Size : \`\`\`${info.size}\n`
+                            txt += `\`\`\`Link : \`\`\`\n`
+                            down_link = info.link_dl
+                            for (var z in down_link) {
+                                txt += `${z} - ${down_link[z]}\n`
+                            }
+                        }
+                    }
+                    reply(txt)
+                    break
+                case 'otakudesusearch':
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/otakudesusearch?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    txt = `Title : ${get_result.title}\n`
+                    txt += `Japanese : ${get_result.japanese}\n`
+                    txt += `Judul : ${get_result.judul}\n`
+                    txt += `Type : ${get_result.type}\n`
+                    txt += `Episode : ${get_result.episodes}\n`
+                    txt += `Aired : ${get_result.aired}\n`
+                    txt += `Producers : ${get_result.producers}\n`
+                    txt += `Genre : ${get_result.genres}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `Studios : ${get_result.status}\n`
+                    txt += `Rating : ${get_result.rating}\n`
+                    txt += `Credit : ${get_result.credit}\n`
+                    get_link = get_result.link_dl
+                    for (var x in get_link) {
+                        txt += `\n\n*${get_link[x].title}*\n`
+                        for (var y in get_link[x].link_dl) {
+                            info = get_link[x].link_dl[y]
+                            txt += `\n\`\`\`Reso : \`\`\`${info.reso}\n`
+                            txt += `\`\`\`Size : \`\`\`${info.size}\n`
+                            txt += `\`\`\`Link : \`\`\`\n`
+                            down_link = info.link_dl
+                            for (var z in down_link) {
+                                txt += `${z} - ${down_link[z]}\n`
+                            }
+                        }
+                    }
+                    reply(txt)
+                    break
                 default:
                     if (body.startsWith(`${prefix}${command}`)) {
                         reply(`Sorry bro, command *${prefix}${command}* gk enek nggon list *${prefix}help*`)
                     }
                     if (!isGroup) {
-                        simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${pesan}`)
+                        simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${body}`)
                         reply(simi.result)
                     }
             }
         } catch (e) {
-            console.log(color(time, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'))
+            console.log(color(time, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.stack, "red"))
         }
     })
 }
