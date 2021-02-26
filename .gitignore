@@ -4,6 +4,9 @@ node_modules/
 # session files
 lolhuman.json
 
-# Lock files
+# lock files
 package-lock.json
 *.lock
+
+# config
+config.json

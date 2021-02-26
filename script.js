@@ -149,6 +149,17 @@ async function starts() {
                     quotedilan = await fetchJson(`http://api.lolhuman.xyz/api/quotes/dilan?apikey=${apikey}`)
                     reply(quotedilan.result)
                     break
+                case 'jadwaltv':
+                    channel = args[0]
+                    tvnow = await fetchJson(`http://api.lolhuman.xyz/api/jadwaltv/${channel}?apikey=${apikey}`)
+                    tvnow = tvnow.result
+                    txt = `Jadwal TV ${channel.toUpperCase()}\n`
+                    for (var x in tvnow) {
+                        txt += `${x} - ${tvnow[x]}\n`
+                    }
+                    console.log(txt)
+                    reply(txt)
+                    break
                 default:
                     if (body.startsWith(`${prefix}${command}`)) {
                         reply(`Sorry bro, command *${prefix}${command}* gk enek nggon list *${prefix}help*`)
