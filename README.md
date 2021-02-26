@@ -32,4 +32,4 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 
 # Thanks To
 * [`Fxc7`](https://github.com/Fxc7)
-* [`Paiiss`](https://github.com/Paiiss)
+* [`Pais`](https://github.com/Paiiss)
