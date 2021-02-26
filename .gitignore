@@ -1,0 +1,9 @@
+# node module
+node_modules/
+
+# session files
+lolhuman.json
+
+# Lock files
+package-lock.json
+*.lock
