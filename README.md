@@ -33,3 +33,4 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 # Thanks To
 * [`Fxc7`](https://github.com/Fxc7)
 * [`Pais`](https://github.com/Paiiss)
+* [`MhankBarBar`](https://github.com/MhankBarBar)
