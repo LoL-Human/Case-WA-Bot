@@ -4,8 +4,8 @@
 
 ## Cloning this repo
 ```cmd
-> git clone https://github.com/Paiiss/FummyBOT.git
-> cd FummyBOT
+> git clone https://github.com/LoL-Human/Case-WA-Bot.git
+> cd Case-WA-Bot
 ```
 
 ## Install the package
