@@ -24,7 +24,7 @@ const moment = require('moment-timezone')
 
 const { apikey, prefix } = JSON.parse(fs.readFileSync('./config.json'))
 
-const { fetchJson } = require('./lib/fetcher')
+const { fetchJson, getBuffer } = require('./lib/fetcher')
 const { color } = require('./lib/color')
 const { help, bahasa, donate } = require('./help/help')
 
@@ -48,6 +48,7 @@ async function starts() {
     fs.writeFileSync('./lolhuman.json', JSON.stringify(lolhuman.base64EncodedAuthInfo(), null, '\t'))
 
     lolhuman.on('chat-update', async(lol) => {
+        const time = moment.tz('Asia/Jakarta').format('HH:mm:ss')
         try {
             if (!lol.hasNewMessage) return
             lol = JSON.parse(JSON.stringify(lol)).messages[0]
@@ -63,8 +64,6 @@ async function starts() {
             pushname2 = lolhuman.contacts[nameReq] != undefined ? lolhuman.contacts[nameReq].vname || lolhuman.contacts[nameReq].notify : undefined
 
             const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
-
-            const time = moment.tz('Asia/Jakarta').format('HH:mm:ss')
 
             pesan = lol.message.conversation
             body = (type === 'conversation' && pesan.startsWith(prefix)) ? pesan : (type == 'imageMessage') && lol.message.imageMessage.caption.startsWith(prefix) ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption.startsWith(prefix) ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text.startsWith(prefix) ? lol.message.extendedTextMessage.text : ''
@@ -157,8 +156,63 @@ async function starts() {
                     for (var x in tvnow) {
                         txt += `${x} - ${tvnow[x]}\n`
                     }
-                    console.log(txt)
                     reply(txt)
+                    break
+                case 'nhentai':
+                    henid = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/nhentai/${henid}?apikey=${apikey}`)
+                    get_result = get_result.result
+                    txt = `Title Romaji : ${get_result.title_romaji}\n`
+                    txt += `Title Native : ${get_result.title_native}\n`
+                    txt += `Read Online : ${get_result.read}\n`
+                    get_info = get_result.info
+                    txt += `Parodies : ${get_info.parodies}\n`
+                    txt += `Character : ${get_info.characters.join(", ")}\n`
+                    txt += `Tags : ${get_info.tags.join(", ")}\n`
+                    txt += `Artist : ${get_info.artists}\n`
+                    txt += `Group : ${get_info.groups}\n`
+                    txt += `Languager : ${get_info.languages.join(", ")}\n`
+                    txt += `Categories : ${get_info.categories}\n`
+                    txt += `Pages : ${get_info.pages}\n`
+                    txt += `Uploaded : ${get_info.uploaded}\n`
+                    reply(txt)
+                    break
+                case 'nhentaipdf':
+                    henid = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/nhentai/${henid}?apikey=${apikey}`)
+                    get_result = get_result.result
+                    buffer = await getBuffer(get_result.file_pdf)
+                    lolhuman.sendMessage(from, buffer, document, { quoted: lol }, mimetype = Mimetype.pdf)
+                    break
+                case 'yaoi':
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/nsfw/yaoi?apikey=${apikey}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'yuri':
+                    img = await fetchJson(`http://api.lolhuman.xyz/api/random2/yuri?apikey=${apikey}`)
+                    img = img.result
+                    buffer = await getBuffer(img)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'wancak':
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/onecak?apikey=${apikey}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'ephoto1':
+                    txt = args.join(" ")
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/ephoto1/wetglass?apikey=${apikey}&text=${txt}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'ephoto2':
+                    txt1 = args[0]
+                    txt2 = args[1]
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/ephoto2/codwarzone?apikey=${apikey}&text1=${txt1}&text2=${txt2}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'photoeditor':
+                    url = args[0]
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/editor/fisheye?apikey=${apikey}&img=${url}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
                 default:
                     if (body.startsWith(`${prefix}${command}`)) {
@@ -170,7 +224,7 @@ async function starts() {
                     }
             }
         } catch (e) {
-            console.log('Error : %s', color(e, 'white'))
+            console.log(color(time, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'))
         }
     })
 }
