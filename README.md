@@ -27,6 +27,9 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 > npm start
 ```
 
+## Note:
+* You can request a case in my [`WhatsApp`](http://wa.me/62895418200111)
+
 # Thanks To
 * [`Fxc7`](https://github.com/Fxc7)
 * [`Paiiss`](https://github.com/Paiiss)
