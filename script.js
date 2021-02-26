@@ -182,7 +182,7 @@ async function starts() {
                     get_result = await fetchJson(`http://api.lolhuman.xyz/api/nhentai/${henid}?apikey=${apikey}`)
                     get_result = get_result.result
                     buffer = await getBuffer(get_result.file_pdf)
-                    lolhuman.sendMessage(from, buffer, document, { quoted: lol }, mimetype = Mimetype.pdf)
+                    lolhuman.sendMessage(from, buffer, document, { quoted: lol, mimetype: Mimetype.pdf })
                     break
                 case 'yaoi':
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/nsfw/yaoi?apikey=${apikey}`)
@@ -213,6 +213,58 @@ async function starts() {
                     url = args[0]
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/editor/fisheye?apikey=${apikey}&img=${url}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'kusonime':
+                    url = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/kusonime?apikey=${apikey}&url=${url}`)
+                    get_result = get_result.result
+                    txt = `Title : ${get_result.title}\n`
+                    txt += `Japanese : ${get_result.japanese}\n`
+                    txt += `Genre : ${get_result.genre}\n`
+                    txt += `Seasons : ${get_result.seasons}\n`
+                    txt += `Producers : ${get_result.producers}\n`
+                    txt += `Type : ${get_result.type}\n`
+                    txt += `Status : ${get_result.status}\n`
+                    txt += `Total Episode : ${get_result.total_episode}\n`
+                    txt += `Score : ${get_result.score}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `Released On : ${get_result.released_on}\n`
+                    txt += `Desc : ${get_result.desc}\n`
+                    link_dl = get_result.link_dl
+                    for (var x in link_dl) {
+                        txt += `\n${x}\n`
+                        for (var y in link_dl[x]) {
+                            txt += `${y} - ${link_dl[x][y]}\n`
+                        }
+                    }
+                    buffer = await getBuffer(get_result.thumbnail)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
+                    break
+                case 'kusonimesearch':
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/kusonimesearch?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    txt = `Title : ${get_result.title}\n`
+                    txt += `Japanese : ${get_result.japanese}\n`
+                    txt += `Genre : ${get_result.genre}\n`
+                    txt += `Seasons : ${get_result.seasons}\n`
+                    txt += `Producers : ${get_result.producers}\n`
+                    txt += `Type : ${get_result.type}\n`
+                    txt += `Status : ${get_result.status}\n`
+                    txt += `Total Episode : ${get_result.total_episode}\n`
+                    txt += `Score : ${get_result.score}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `Released On : ${get_result.released_on}\n`
+                    txt += `Desc : ${get_result.desc}\n`
+                    link_dl = get_result.link_dl
+                    for (var x in link_dl) {
+                        txt += `\n${x}\n`
+                        for (var y in link_dl[x]) {
+                            txt += `${y} - ${link_dl[x][y]}\n`
+                        }
+                    }
+                    buffer = await getBuffer(get_result.thumbnail)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
                     break
                 default:
                     if (body.startsWith(`${prefix}${command}`)) {
