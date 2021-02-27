@@ -27,6 +27,30 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 > npm start
 ```
 
+## Available Case
+
+| Case |
+| :---------------------------------------------: |
+|  Al Quran |
+|  Quotes |
+|  Quotes Dilan |
+|  Jadwal TV |
+|  Nhentai |
+|  Nhentai PDF |
+|  Yaoi |
+|  Yuri |
+|  Wancak |
+|  Ephoto1 |
+|  Ephoto2 |
+|  Photo Editor |
+|  Kusonime |
+|  Kusonime Search |
+|  Otakudesu |
+|  Otakudesu Search |
+|  Sticker |
+|  Instagram Download |
+|  Facebook Download |
+
 ## Note:
 * You can request a case in my [`WhatsApp`](http://wa.me/62895418200111)
 
@@ -34,3 +58,4 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * [`Fxc7`](https://github.com/Fxc7)
 * [`Pais`](https://github.com/Paiiss)
 * [`MhankBarBar`](https://github.com/MhankBarBar)
+* [`Lindow`](https://github.com/lindow666)

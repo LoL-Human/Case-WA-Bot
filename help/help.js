@@ -1,40 +1,10 @@
 const help = (prefix) => {
-    return `╭───「 📖 Help 」
-│
-├ • ${prefix}quran 108
-├ • ${prefix}quotes
-├ • ${prefix}quotesdilan
-│
-├─「 Credit 」
-│
-├ • Farhan (Fxc7)
-│
-╰───「 LoL Human 」
-`
+    return `Atur sendiri, mimin males`
 }
 exports.help = help
 
 const donate = (sender) => {
-    return `Hello, ${sender}!
-
-Glad to hear that you wanted to donate to my senpai. All donations will help and motivate him to make me better in the future.
-
-If you really want to donate, here are the methods available:
-
-• DANA / OVO / GOPAY
-⤷ 0895418200111 
-
-• Pulsa (Three)
-⤷ 0895418200111 
-
-• Paypal
-⤷ paypal.me/LoLHuman
-
-• Trakteer
-⤷ trakteer.id/LoLHuman
-
-Very Thanks for Your donation. 😁
-`
+    return `Isi punya situ ae ngab`
 }
 exports.donate = donate
 

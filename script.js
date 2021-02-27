@@ -1,14 +1,3 @@
-/*
-* Tambahin nama author lah
-* Author MhankBarBar, Farhan
-* Tambahin ya Cape Gan ngefix² Yg Ga work
-* Jan numpang nama doank
-
-- What's New?
-* New Features
-*/
-// KALO NGUBAH YG TELITI NTAR GA WORK MALAH NYALAHIN HADEHH
-// DAN YG NYURI TANPA KASIH CREDIT INGAT BRO LU SAMPAH🚮
 const {
     WAConnection,
     MessageType,
@@ -20,13 +9,15 @@ const {
 const fs = require("fs")
 const axios = require('axios')
 const request = require('request')
+const ffmpeg = require('fluent-ffmpeg')
 const moment = require('moment-timezone')
 
 const { apikey, prefix } = JSON.parse(fs.readFileSync('./config.json'))
 
 const { fetchJson, getBuffer } = require('./lib/fetcher')
 const { color } = require('./lib/color')
-const { help, bahasa, donate } = require('./help/help')
+const { getRandom } = require('./lib/function')
+const { help, donate } = require('./help/help')
 
 async function starts() {
     const lolhuman = new WAConnection()
@@ -83,8 +74,8 @@ async function starts() {
             const groupName = isGroup ? groupMetadata.subject : ''
             const totalchat = await lolhuman.chats.all()
 
-            const isUrl = (url) => {
-                return url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
+            const isUrl = (ini_url) => {
+                return ini_url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
             }
             const reply = (teks) => {
                 lolhuman.sendMessage(from, teks, text, { quoted: lol })
@@ -210,13 +201,13 @@ async function starts() {
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
                 case 'photoeditor':
-                    url = args[0]
-                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/editor/fisheye?apikey=${apikey}&img=${url}`)
+                    ini_url = args[0]
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/editor/fisheye?apikey=${apikey}&img=${ini_url}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
                 case 'kusonime':
-                    url = args[0]
-                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/kusonime?apikey=${apikey}&url=${url}`)
+                    ini_url = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/kusonime?apikey=${apikey}&url=${ini_url}`)
                     get_result = get_result.result
                     txt = `Title : ${get_result.title}\n`
                     txt += `Japanese : ${get_result.japanese}\n`
@@ -267,8 +258,8 @@ async function starts() {
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
                     break
                 case 'otakudesu':
-                    url = args[0]
-                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/otakudesu?apikey=${apikey}&url=${url}`)
+                    ini_url = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/otakudesu?apikey=${apikey}&url=${ini_url}`)
                     get_result = get_result.result
                     txt = `Title : ${get_result.title}\n`
                     txt += `Japanese : ${get_result.japanese}\n`
@@ -330,9 +321,54 @@ async function starts() {
                     }
                     reply(txt)
                     break
+                case 'sticker':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        const media = await lolhuman.downloadAndSaveMediaMessage(encmedia)
+                        const ran = getRandom('.webp')
+                        await ffmpeg(`./${media}`)
+                            .input(media)
+                            .on('start', function(cmd) {
+                                console.log(`Started : ${cmd}`)
+                            })
+                            .on('error', function(err) {
+                                console.log(`Error : ${err}`)
+                                fs.unlinkSync(media)
+                                reply(mess.error.stick)
+                            })
+                            .on('end', function() {
+                                console.log('Finish')
+                                buff = fs.readFileSync(ran)
+                                lolhuman.sendMessage(from, buff, sticker, { quoted: lol })
+                                fs.unlinkSync(media)
+                                fs.unlinkSync(ran)
+                            })
+                            .addOutputOptions([`-vcodec`, `libwebp`, `-vf`, `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+                            .toFormat('webp')
+                            .save(ran)
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
+                    }
+                    break
+                case 'igdl':
+                    ini_url = args[0]
+                    ini_url = await fetchJson(`http://api.lolhuman.xyz/api/instagram?apikey=${apikey}&url=${ini_url}`)
+                    ini_url = ini_url.result
+                    ini_type = image
+                    if (ini_url.includes(".mp4")) ini_type = video
+                    buffer = await getBuffer(ini_url)
+                    lolhuman.sendMessage(from, buffer, ini_type, { quoted: lol })
+                    break
+                case 'fbdl':
+                    ini_url = args[0]
+                    ini_url = await fetchJson(`http://api.lolhuman.xyz/api/facebook?apikey=${apikey}&url=${ini_url}`)
+                    ini_url = ini_url.result[0].link
+                    buffer = await getBuffer(ini_url)
+                    lolhuman.sendMessage(from, buffer, video, { quoted: lol })
+                    break
                 default:
                     if (body.startsWith(`${prefix}${command}`)) {
-                        reply(`Sorry bro, command *${prefix}${command}* gk enek nggon list *${prefix}help*`)
+                        reply(`Sorry bro, command *${prefix}${command}* gk ada di list *${prefix}help*`)
                     }
                     if (!isGroup) {
                         simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${body}`)
@@ -340,7 +376,7 @@ async function starts() {
                     }
             }
         } catch (e) {
-            console.log(color(time, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.stack, "red"))
+            console.log(color(time, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.line, "red"))
         }
     })
 }
