@@ -48,6 +48,9 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * [`Sticker`](https://github.com/LoL-Human/Case-WA-Bot/blob/bd2c9df29dfff85c67e7735d94b6326070122618/script.js#L324)
 * [`Instagram Download`](https://github.com/LoL-Human/Case-WA-Bot/blob/bd2c9df29dfff85c67e7735d94b6326070122618/script.js#L353)
 * [`Facebook Download`](https://github.com/LoL-Human/Case-WA-Bot/blob/bd2c9df29dfff85c67e7735d94b6326070122618/script.js#L362)
+* [`Youtube Play`](https://github.com/LoL-Human/Case-WA-Bot/blob/bd2c9df29dfff85c67e7735d94b6326070122618/script.js#L370)
+* [`Pinterest Download`](https://github.com/LoL-Human/Case-WA-Bot/blob/bd2c9df29dfff85c67e7735d94b6326070122618/script.js#L389)
+* [`Broadcast`](https://github.com/LoL-Human/Case-WA-Bot/blob/bd2c9df29dfff85c67e7735d94b6326070122618/script.js#L396)
 
 ## Note:
 * You can request a case in my [`WhatsApp`](http://wa.me/62895418200111)
