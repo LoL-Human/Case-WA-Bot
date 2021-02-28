@@ -57,3 +57,4 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * [`Pais`](https://github.com/Paiiss)
 * [`MhankBarBar`](https://github.com/MhankBarBar)
 * [`Lindow`](https://github.com/lindow666)
+* [`Mat`](https://github.com/mamet8)
