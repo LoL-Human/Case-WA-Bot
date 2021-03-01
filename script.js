@@ -674,7 +674,7 @@ async function starts() {
                         reply(`Sorry bro, command *${prefix}${command}* gk ada di list *${prefix}help*`)
                     }
                     if (!isGroup && !isCmd) {
-                        simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${body}`)
+                        simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${budy}`)
                         reply(simi.result)
                     }
             }
