@@ -62,10 +62,9 @@ async function starts() {
 
             const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
 
-            const pesan = type === 'conversation' ? lol.message.conversation : lol.message.extendedTextMessage.text
-            body = (type === 'conversation' && pesan.startsWith(prefix)) ? pesan : (type == 'imageMessage') && lol.message.imageMessage.caption.startsWith(prefix) ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption.startsWith(prefix) ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text.startsWith(prefix) ? lol.message.extendedTextMessage.text : ''
-            budy = (type === 'conversation') ? pesan : (type === 'extendedTextMessage') ? lol.message.extendedTextMessage.text : ''
-            var Link = (type === 'conversation' && pesan) ? pesan : (type == 'imageMessage') && lol.message.imageMessage.caption ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text ? lol.message.extendedTextMessage.text : ''
+            body = (type === 'conversation' && lol.startsWith(prefix)) ? lol : (type == 'imageMessage') && lol.message.imageMessage.caption.startsWith(prefix) ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption.startsWith(prefix) ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text.startsWith(prefix) ? lol.message.extendedTextMessage.text : ''
+            budy = (type === 'conversation') ? lol : (type === 'extendedTextMessage') ? lol.message.extendedTextMessage.text : ''
+            var Link = (type === 'conversation' && lol) ? lol : (type == 'imageMessage') && lol.message.imageMessage.caption ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text ? lol.message.extendedTextMessage.text : ''
             const messagesLink = Link.slice(0).trim().split(/ +/).shift().toLowerCase()
             const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
             const args = body.trim().split(/ +/).slice(1)
@@ -102,23 +101,25 @@ async function starts() {
             const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
             const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
 
-            if (!isGroup && !isCmd) console.log(color(time, "white"), color("[ PRIVATE ]", "aqua"), color(pesan, "white"), "from", color(sender.split('@')[0], "yellow"))
-            if (isGroup && !isCmd) console.log(color(time, "white"), color("[  GROUP  ]", "aqua"), color(pesan, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
-            if (!isGroup && isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), color(pesan, "white"), "from", color(sender.split('@')[0], "yellow"))
-            if (isGroup && isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), color(pesan, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
+            if (!isGroup && !isCmd) console.log(color(time, "white"), color("[ PRIVATE ]", "aqua"), color(body, "white"), "from", color(sender.split('@')[0], "yellow"))
+            if (isGroup && !isCmd) console.log(color(time, "white"), color("[  GROUP  ]", "aqua"), color(body, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
+            if (!isGroup && isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), color(body, "white"), "from", color(sender.split('@')[0], "yellow"))
+            if (isGroup && isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), color(body, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
 
             switch (command) {
                 case 'help':
                     var punya_wa = "0@s.whatsapp.net"
                     var ini_text = "api.lolhuman.xyz"
+                    var buffer = await getBuffer("https://i.ibb.co/JdfQ73m/photo-2021-02-05-10-13-39.jpg")
                     const ini_csreply = {
                         contextInfo: {
                             stanzaId: 'B826873620DD5947E683E3ABE663F263',
                             participant: punya_wa,
                             remoteJid: 'status@broadcast',
                             quotedMessage: {
-                                extendedTextMessage: {
-                                    text: ini_text,
+                                imageMessage: {
+                                    caption: ini_text,
+                                    jpegThumbnail: buffer
                                 }
                             }
                         }
@@ -211,16 +212,6 @@ async function starts() {
                     get_result = get_result.result
                     buffer = await getBuffer(get_result)
                     lolhuman.sendMessage(from, buffer, document, { quoted: lol, mimetype: Mimetype.pdf, filename: `${henid}.pdf` })
-                    break
-                case 'yaoi':
-                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/nsfw/yaoi?apikey=${apikey}`)
-                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
-                    break
-                case 'yuri':
-                    img = await fetchJson(`http://api.lolhuman.xyz/api/random2/yuri?apikey=${apikey}`)
-                    img = img.result
-                    buffer = await getBuffer(img)
-                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
                 case 'wancak':
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/onecak?apikey=${apikey}`)
@@ -412,14 +403,14 @@ async function starts() {
                     txt += `Duration : ${get_info.duration}\n`
                     txt += `View : ${get_info.view}\n`
                     txt += `Like : ${get_info.like}\n`
-                    txt += `Sislike : ${get_info.dislike}\n`
+                    txt += `Dislike : ${get_info.dislike}\n`
                     txt += `Description :\n ${get_info.description}\n`
                     buffer = await getBuffer(get_info.thumbnail)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
                     get_audio = await getBuffer(get_result.audio[3].link)
-                    lolhuman.sendMessage(from, get_audio, audio, { quoted: lol })
+                    lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_info.title}.mp3`, quoted: tod })
                     get_video = await getBuffer(get_result.video[0].link)
-                    lolhuman.sendMessage(from, get_video, video, { quoted: lol })
+                    lolhuman.sendMessage(from, get_audio, video, { mimetype: 'video/mp4', filename: `${get_info.title}.mp4`, quoted: lol })
                     break
                 case 'ytmp3':
                     ini_link = args[0]
@@ -435,7 +426,7 @@ async function starts() {
                     buffer = await getBuffer(get_result.thumbnail)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
                     get_audio = await getBuffer(get_result.link[3].link)
-                    lolhuman.sendMessage(from, get_audio, audio, { quoted: lol })
+                    lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_result.title}.mp3`, quoted: lol })
                     break
                 case 'ytmp4':
                     ini_link = args[0]
@@ -451,7 +442,7 @@ async function starts() {
                     buffer = await getBuffer(get_result.thumbnail)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
                     get_audio = await getBuffer(get_result.link[0].link)
-                    lolhuman.sendMessage(from, get_audio, video, { quoted: lol })
+                    lolhuman.sendMessage(from, get_audio, video, { mimetype: 'video/mp4', filename: `${get_result.title}.mp4`, quoted: lol })
                     break
                 case 'pinterest':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} loli kawaii`)
@@ -499,7 +490,80 @@ async function starts() {
                 case 'megumin':
                 case 'art':
                 case 'wallnime':
-                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/waifu?apikey=${apikey}`)
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'neko':
+                case 'waifu':
+                case 'loli':
+                case 'chiisaihentai':
+                case 'trap':
+                case 'blowjob':
+                case 'yaoi':
+                case 'ecchi':
+                case 'hentai':
+                case 'ahegao':
+                case 'hololewd':
+                case 'sideoppai':
+                case 'animefeets':
+                case 'animebooty':
+                case 'animethighss':
+                case 'hentaiparadise':
+                case 'animearmpits':
+                case 'hentaifemdom':
+                case 'lewdanimegirls':
+                case 'biganimetiddies':
+                case 'animebellybutton':
+                case 'hentai4everyone':
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/nsfw/${command}?apikey=${apikey}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'bj':
+                case 'ero':
+                case 'cum':
+                case 'feet':
+                case 'yuri':
+                case 'trap':
+                case 'ngif':
+                case 'lewd':
+                case 'feed':
+                case 'eron':
+                case 'solo':
+                case 'gasm':
+                case 'poke':
+                case 'anal':
+                case 'holo':
+                case 'tits':
+                case 'kuni':
+                case 'kiss':
+                case 'erok':
+                case 'smug':
+                case 'baka':
+                case 'solog':
+                case 'feetg':
+                case 'lewdk':
+                case 'waifu':
+                case 'pussy':
+                case 'femdom':
+                case 'cuddle':
+                case 'hentai':
+                case 'eroyuri':
+                case 'cum_jpg':
+                case 'blowjob':
+                case 'erofeet':
+                case 'holoero':
+                case 'classic':
+                case 'erokemo':
+                case 'fox_girl':
+                case 'futanari':
+                case 'lewdkemo':
+                case 'wallpaper':
+                case 'pussy_jpg':
+                case 'kemonomimi':
+                case 'nsfw_avatar':
+                case 'nsfw_neko_gif':
+                case 'random_hentai_gif':
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/random2/${command}?apikey=${apikey}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
                 case 'blackpink':
@@ -610,7 +674,7 @@ async function starts() {
                         reply(`Sorry bro, command *${prefix}${command}* gk ada di list *${prefix}help*`)
                     }
                     if (!isGroup && !isCmd) {
-                        simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${pesan}`)
+                        simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${body}`)
                         reply(simi.result)
                     }
             }
