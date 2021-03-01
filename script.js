@@ -18,6 +18,7 @@ const { fetchJson, getBuffer } = require('./lib/fetcher')
 const { color } = require('./lib/color')
 const { getRandom } = require('./lib/function')
 const { help, donate } = require('./help/help')
+const { exit } = require('process')
 
 async function starts() {
     const lolhuman = new WAConnection()
@@ -27,6 +28,11 @@ async function starts() {
     })
 
     fs.existsSync('./lolhuman.json') && lolhuman.loadAuthInfo('./lolhuman.json')
+    if (apikey == "") {
+        ini_time = moment.tz('Asia/Jakarta').format('HH:mm:ss')
+        console.log(color(ini_time, "white"), color("[  ERROR  ]", "aqua"), color("Apikey is empty, please check at config.json", 'red'))
+        exit()
+    }
     lolhuman.on('connecting', () => {
         const time_connecting = moment.tz('Asia/Jakarta').format('HH:mm:ss')
         console.log(color(time_connecting, "white"), color("[  STATS  ]", "aqua"), "Connecting...")
