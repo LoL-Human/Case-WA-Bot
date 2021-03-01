@@ -40,8 +40,6 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * `Jadwal TV`
 * `Nhentai`
 * `Nhentai PDF`
-* `Yaoi`
-* `Yuri`
 * `Wancak`
 * `Ephoto1`
 * `Ephoto2`
@@ -62,6 +60,7 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * `Pixiv Search`
 * `Pixiv Download`
 * `Konachan Search`
+* `Random Image`
 * `Textprome`
 * `Ephoto`
 * `Photo Oxy`
