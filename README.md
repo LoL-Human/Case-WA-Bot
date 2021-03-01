@@ -29,6 +29,9 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 
 ## Available Case
 
+* `Broadcast`
+* `Kick`
+* `Add`
 * `Al Quran`
 * `Quotes`
 * `Quotes Dilan`
@@ -46,11 +49,20 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * `Otakudesu`
 * `Otakudesu Search`
 * `Sticker`
+* `Telegram Sticker`
 * `Instagram Download`
 * `Facebook Download`
 * `Youtube Play`
+* `Youtube Audio`
+* `Youtube Video`
+* `Pinterest Search`
 * `Pinterest Download`
-* `Broadcast`
+* `Pixiv Search`
+* `Pixiv Download`
+* `Konachan Search`
+* `Textprome`
+* `Ephoto`
+* `Photo Oxy`
 
 ## Note:
 * You can request a case in my [`WhatsApp`](http://wa.me/62895418200111).
