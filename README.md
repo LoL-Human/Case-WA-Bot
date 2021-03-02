@@ -46,6 +46,7 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * `Kusonime Search`
 * `Otakudesu`
 * `Otakudesu Search`
+* `TTP`
 * `Sticker`
 * `Telegram Sticker`
 * `Instagram Download`
