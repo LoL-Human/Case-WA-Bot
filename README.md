@@ -2,6 +2,18 @@
 
 # Installation
 
+## Termux
+```cmd
+> pkg update && pkg upgrade
+> pkg install git -y
+> pkg install nodejs -y
+> pkg install ffmpeg -y
+```
+
+## Windows
+* [`Download ffmpeg`](https://ffmpeg.org/download.html#build-windows)
+* [`Download Node JS`](https://nodejs.org/en/download/)
+
 ## Cloning this repo
 ```cmd
 > git clone https://github.com/LoL-Human/Case-WA-Bot.git
@@ -68,6 +80,7 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * You can request a case in my [`WhatsApp`](http://wa.me/62895418200111).
 
 # Thanks To
+* [`Baileys`](https://github.com/adiwajshing/Baileys)
 * [`Fxc7`](https://github.com/Fxc7)
 * [`Pais`](https://github.com/Paiiss)
 * [`MhankBarBar`](https://github.com/MhankBarBar)
