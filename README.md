@@ -1,7 +1,5 @@
 # LoL Human Case Rest API WA Bot
 
-
-
 # Installation
 
 ## Cloning this repo
@@ -74,3 +72,4 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * [`MhankBarBar`](https://github.com/MhankBarBar)
 * [`Lindow`](https://github.com/lindow666)
 * [`Mat`](https://github.com/mamet8)
+* [`Riyan`](https://github.com/shitara999)

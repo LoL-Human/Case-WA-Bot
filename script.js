@@ -477,6 +477,12 @@ async function starts() {
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/konachan?apikey=${apikey}&query=${query}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
+                case 'ttp':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} LoL Human`)
+                    txt = args.join(" ")
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/ttp?apikey=${apikey}&text=${txt}`)
+                    lolhuman.sendMessage(from, buffer, sticker, { quoted: lol })
+                    break
                 case 'bts':
                 case 'exo':
                 case 'elf':
