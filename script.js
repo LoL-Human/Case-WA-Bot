@@ -7,8 +7,7 @@ const {
 } = require('@adiwajshing/baileys')
 
 const fs = require("fs")
-const axios = require('axios')
-const request = require('request')
+const FormData = require('form-data')
 const ffmpeg = require('fluent-ffmpeg')
 const moment = require('moment-timezone')
 
@@ -16,6 +15,7 @@ const { apikey, prefix } = JSON.parse(fs.readFileSync('./config.json'))
 
 const { fetchJson, getBuffer } = require('./lib/fetcher')
 const { color } = require('./lib/color')
+const { exec } = require("child_process")
 const { getRandom } = require('./lib/function')
 const { help, donate } = require('./help/help')
 const { exit } = require('process')
@@ -45,8 +45,8 @@ async function starts() {
     fs.writeFileSync('./lolhuman.json', JSON.stringify(lolhuman.base64EncodedAuthInfo(), null, '\t'))
 
     lolhuman.on('chat-update', async(lol) => {
-        const time = moment.tz('Asia/Jakarta').format('HH:mm:ss')
         try {
+            const time = moment.tz('Asia/Jakarta').format('HH:mm:ss')
             if (!lol.hasNewMessage) return
             lol = JSON.parse(JSON.stringify(lol)).messages[0]
             if (!lol.message) return
@@ -363,7 +363,6 @@ async function starts() {
                             .addOutputOptions([`-vcodec`, `libwebp`, `-vf`, `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
                             .toFormat('webp')
                             .save(ran)
-
                     } else {
                         reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
                     }
@@ -483,6 +482,38 @@ async function starts() {
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/ttp?apikey=${apikey}&text=${txt}`)
                     lolhuman.sendMessage(from, buffer, sticker, { quoted: lol })
                     break
+                case 'wait':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        const filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia);
+                        const form = new FormData();
+                        const stats = fs.statSync(filePath);
+                        const fileSizeInBytes = stats.size;
+                        const fileStream = fs.createReadStream(filePath);
+                        form.append('img', fileStream, { knownLength: fileSizeInBytes });
+                        const options = {
+                            method: 'POST',
+                            credentials: 'include',
+                            body: form
+                        }
+                        get_result = await fetchJson(`http://api.lolhuman.xyz/api/wait?apikey=${apikey}`, {...options })
+                        get_result = get_result.result
+                        console.log(get_result)
+                        ini_video = await getBuffer(get_result.video)
+                        txt = `Anilist id : ${get_result.anilist_id}\n`
+                        txt += `MAL id : ${get_result.mal_id}\n`
+                        txt += `Title Romaji : ${get_result.title_romaji}\n`
+                        txt += `Title Native : ${get_result.title_native}\n`
+                        txt += `Title English : ${get_result.title_english}\n`
+                        txt += `at : ${get_result.at}\n`
+                        txt += `Episode : ${get_result.episode}\n`
+                        txt += `Eimilarity : ${get_result.similarity}`
+                        lolhuman.sendMessage(from, ini_video, video, { quoted: lol, caption: txt })
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                    }
+                    break
+                case 'art':
                 case 'bts':
                 case 'exo':
                 case 'elf':
@@ -494,7 +525,6 @@ async function starts() {
                 case 'sagiri':
                 case 'shinobu':
                 case 'megumin':
-                case 'art':
                 case 'wallnime':
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
@@ -530,7 +560,6 @@ async function starts() {
                 case 'feet':
                 case 'yuri':
                 case 'trap':
-                case 'ngif':
                 case 'lewd':
                 case 'feed':
                 case 'eron':
@@ -567,10 +596,21 @@ async function starts() {
                 case 'pussy_jpg':
                 case 'kemonomimi':
                 case 'nsfw_avatar':
-                case 'nsfw_neko_gif':
-                case 'random_hentai_gif':
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/random2/${command}?apikey=${apikey}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'ngif':
+                case 'nsfw_neko_gif':
+                case 'random_hentai_gif':
+                    ranp = getRandom('.gif')
+                    rano = getRandom('.webp')
+                    buffer = `http://api.lolhuman.xyz/api/random2/${command}?apikey=${apikey}`
+                    exec(`wget ${buffer} -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
+                        fs.unlinkSync(ranp)
+                        buff = fs.readFileSync(rano)
+                        lolhuman.sendMessage(from, buff, sticker, { quoted: lol })
+                        fs.unlinkSync(rano)
+                    })
                     break
                 case 'blackpink':
                 case 'neon':
@@ -685,7 +725,8 @@ async function starts() {
                     }
             }
         } catch (e) {
-            console.log(color(time, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.line, "red"))
+            const time_error = moment.tz('Asia/Jakarta').format('HH:mm:ss')
+            console.log(color(time_error, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.line, "red"))
         }
     })
 }

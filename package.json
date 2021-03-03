@@ -23,6 +23,7 @@
         "fake-useragent": "^1.0.1",
         "file-type": "^16.2.0",
         "fluent-ffmpeg": "^2.1.2",
+        "form-data": "^4.0.0",
         "fs-extra": "^9.0.1",
         "moment-timezone": "^0.5.32",
         "multistream": "^4.0.1",

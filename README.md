@@ -41,25 +41,10 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 
 ## Available Case
 
-* `Broadcast`
-* `Kick`
-* `Add`
+### Al Quran
 * `Al Quran`
-* `Quotes`
-* `Quotes Dilan`
-* `Jadwal TV`
-* `Nhentai`
-* `Nhentai PDF`
-* `Wancak`
-* `Ephoto1`
-* `Ephoto2`
-* `Photo Editor`
-* `Kusonime`
-* `Kusonime Search`
-* `Otakudesu`
-* `Otakudesu Search`
-* `TTP`
-* `Sticker`
+
+### Downloader
 * `Telegram Sticker`
 * `Instagram Download`
 * `Facebook Download`
@@ -70,11 +55,46 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * `Pinterest Download`
 * `Pixiv Search`
 * `Pixiv Download`
-* `Konachan Search`
-* `Random Image`
+
+### Text Maker
 * `Textprome`
-* `Ephoto`
 * `Photo Oxy`
+* `Ephoto 360`
+
+### Image Search
+* `Konachan Search`
+
+### Random Image
+* `Random Image`
+
+### Random Text
+* `Quotes`
+* `Quotes Dilan`
+
+### AniManga
+* `Nhentai`
+* `Nhentai PDF`
+* `Kusonime`
+* `Kusonime Search`
+* `Otakudesu`
+* `Otakudesu Search`
+* `WAIT`
+
+### Information
+* `Jadwal TV`
+
+### Entertainment
+* `Wancak`
+
+### Creator
+* `TTP`
+* `Photo Editor`
+
+### Etc
+* `Add`
+* `Kick`
+* `Sticker`
+* `Broadcast`
 
 ## Note:
 * You can request a case in my [`WhatsApp`](http://wa.me/62895418200111).
