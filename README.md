@@ -91,8 +91,6 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * `Photo Editor`
 
 ### Etc
-* `Add`
-* `Kick`
 * `Sticker`
 * `Broadcast`
 

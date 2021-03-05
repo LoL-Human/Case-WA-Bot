@@ -68,7 +68,6 @@ async function starts() {
             const messagesLink = Link.slice(0).trim().split(/ +/).shift().toLowerCase()
             const command = body.slice(1).trim().split(/ +/).shift().toLowerCase()
             const args = body.trim().split(/ +/).slice(1)
-            const argsjoin = args.join(' ')
             const isCmd = body.startsWith(prefix)
             lolhuman.chatRead(from)
 
@@ -135,16 +134,6 @@ async function starts() {
                     for (let chat of list_chat) {
                         sendMess(chat.jid, ini_text)
                     }
-                    break
-                case 'kick':
-                    mentioned = lol.message.extendedTextMessage.contextInfo.mentionedJid
-                    lolhuman.groupRemove(from, mentioned)
-                    break
-                case 'add':
-                    ini_nomer = args[0]
-                    if (ini_nomer.startsWith('08')) ini_nomer = ini_nomer.replace("0", "62")
-                    ini_nomer = `${ini_nomer}@s.whatsapp.net`
-                    lolhuman.groupAdd(from, [ini_nomer])
                     break
                 case 'alquran':
                     if (args.length < 1) return reply('_Example: !alquran 108_')
@@ -512,6 +501,22 @@ async function starts() {
                     } else {
                         reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
                     }
+                    break
+                case 'xnxxsearch':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} Japanese`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/xnxxsearch?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    txt = ""
+                    for (var x in get_result) {
+                        txt += `Title : ${get_result[x].title}\n`
+                        txt += `Views : ${get_result[x].views}\n`
+                        txt += `Duration : ${get_result[x].duration}\n`
+                        txt += `Uploader : ${get_result[x].uploader}\n`
+                        txt += `Link : ${get_result[x].link}\n`
+                        txt += `Thumbnail : ${get_result[x].thumbnail}\n\n`
+                    }
+                    reply(txt)
                     break
                 case 'art':
                 case 'bts':
