@@ -518,6 +518,29 @@ async function starts() {
                     }
                     reply(txt)
                     break
+                case 'xnxx':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} Japanese`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/xnxx?apikey=${apikey}&url=${query}`)
+                    get_result = get_result.result
+                    txt = ""
+                    txt += `Title : ${get_result.title}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `View : ${get_result.title}\n`
+                    txt += `Rating : ${get_result.rating}\n`
+                    txt += `Like : ${get_result.like}\n`
+                    txt += `Dislike : ${get_result.dislike}\n`
+                    txt += `Comment : ${get_result.comment}\n`
+                    txt += `Tag : ${get_result.tag.join(", ")}\n`
+                    txt += `Description : ${get_result.description}\n`
+                    txt += "Link : \n"
+                    link = get_result.link
+                    for (var x in link) {
+                        txt += `${link[x].type} - ${link[x].link}\n\n`
+                    }
+                    thumbnail = await getBuffer(get_result.thumbnail)
+                    lolhuman.sendMessage(from, thumbnail, image, { quoted: lol, caption: txt })
+                    break
                 case 'art':
                 case 'bts':
                 case 'exo':
@@ -531,7 +554,8 @@ async function starts() {
                 case 'shinobu':
                 case 'megumin':
                 case 'wallnime':
-                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`)
+                    buffer = await getBuffer(`
+                    http: //api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
                 case 'neko':
