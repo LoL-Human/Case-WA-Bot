@@ -55,6 +55,8 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * `Pinterest Download`
 * `Pixiv Search`
 * `Pixiv Download`
+* `XNXX`
+* `XNXX Search`
 
 ### Text Maker
 * `Textprome`
