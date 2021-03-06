@@ -396,7 +396,7 @@ async function starts() {
                     buffer = await getBuffer(get_info.thumbnail)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
                     get_audio = await getBuffer(get_result.audio[3].link)
-                    lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_info.title}.mp3`, quoted: tod })
+                    lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_info.title}.mp3`, quoted: lol })
                     get_video = await getBuffer(get_result.video[0].link)
                     lolhuman.sendMessage(from, get_audio, video, { mimetype: 'video/mp4', filename: `${get_info.title}.mp4`, quoted: lol })
                     break
@@ -523,8 +523,7 @@ async function starts() {
                     query = args.join(" ")
                     get_result = await fetchJson(`http://api.lolhuman.xyz/api/xnxx?apikey=${apikey}&url=${query}`)
                     get_result = get_result.result
-                    txt = ""
-                    txt += `Title : ${get_result.title}\n`
+                    txt = `Title : ${get_result.title}\n`
                     txt += `Duration : ${get_result.duration}\n`
                     txt += `View : ${get_result.title}\n`
                     txt += `Rating : ${get_result.rating}\n`
@@ -540,6 +539,55 @@ async function starts() {
                     }
                     thumbnail = await getBuffer(get_result.thumbnail)
                     lolhuman.sendMessage(from, thumbnail, image, { quoted: lol, caption: txt })
+                    break
+                case 'lk21':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} Transformer`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/lk21?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    txt = `Title : ${get_result.title}\n`
+                    txt += `Link : ${get_result.link}\n`
+                    txt += `Genre : ${get_result.genre}\n`
+                    txt += `Views : ${get_result.views}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `Tahun : ${get_result.tahun}\n`
+                    txt += `Rating : ${get_result.rating}\n`
+                    txt += `Desc : ${get_result.desc}\n`
+                    txt += `Actors : ${get_result.actors.join(", ")}\n`
+                    txt += `Location : ${get_result.location}\n`
+                    txt += `Date Release : ${get_result.date_release}\n`
+                    txt += `Language : ${get_result.language}\n`
+                    txt += `Link Download : ${get_result.link_dl}`
+                    thumbnail = await getBuffer(get_result.thumbnail)
+                    lolhuman.sendMessage(from, thumbnail, image, { quoted: lol, caption: txt })
+                    break
+                case 'drakorongoing':
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/drakorongoing?apikey=${apikey}`)
+                    get_result = get_result.result
+                    txt = "Ongoing Drakor\n\n"
+                    for (var x in get_result) {
+                        txt += `Title : ${get_result[x].title}\n`
+                        txt += `Category : ${get_result[x].category}\n`
+                        txt += `Link : ${get_result[x].link}\n`
+                        txt += `Thumbnail : ${get_result[x].thumbnail}\n`
+                        txt += `Year : ${get_result[x].category}\n`
+                        txt += `Total_episode : ${get_result[x].total_episode}\n`
+                        txt += `Genre : ${get_result[x].genre.join(", ")}\n\n`
+                    }
+                    reply(txt)
+                    break
+                case 'triggered':
+                    ini_url = args[0]
+                    ranp = getRandom('.gif')
+                    rano = getRandom('.webp')
+                    buffer = `http://api.lolhuman.xyz/api/editor/triggered?apikey=${apikey}&img=${ini_url}`
+                    console.log(buffer)
+                    exec(`wget "${buffer}" -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
+                        fs.unlinkSync(ranp)
+                        buff = fs.readFileSync(rano)
+                        lolhuman.sendMessage(from, buff, sticker, { quoted: lol })
+                        fs.unlinkSync(rano)
+                    })
                     break
                 case 'art':
                 case 'bts':
