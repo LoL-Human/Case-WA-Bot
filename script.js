@@ -581,7 +581,6 @@ async function starts() {
                     ranp = getRandom('.gif')
                     rano = getRandom('.webp')
                     buffer = `http://api.lolhuman.xyz/api/editor/triggered?apikey=${apikey}&img=${ini_url}`
-                    console.log(buffer)
                     exec(`wget "${buffer}" -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
                         fs.unlinkSync(ranp)
                         buff = fs.readFileSync(rano)
