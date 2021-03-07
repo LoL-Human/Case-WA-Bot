@@ -206,11 +206,6 @@ async function starts() {
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/onecak?apikey=${apikey}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
-                case 'photoeditor':
-                    ini_url = args[0]
-                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/editor/fisheye?apikey=${apikey}&img=${ini_url}`)
-                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
-                    break
                 case 'kusonime':
                     ini_url = args[0]
                     get_result = await fetchJson(`http://api.lolhuman.xyz/api/kusonime?apikey=${apikey}&url=${ini_url}`)
@@ -588,6 +583,21 @@ async function starts() {
                         fs.unlinkSync(rano)
                     })
                     break
+                case 'wasted':
+                case 'photoeditor':
+                    ini_url = args[0]
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/editor/${wasted}?apikey=${apikey}&img=${ini_url}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'tiktoknowm':
+                    ini_url = args[0]
+                    ini_url = `http://api.lolhuman.xyz/api/tiktok?apikey=${apikey}&url=${ini_url}`
+                    get_result = await fetchJson(ini_url)
+                    buffer = await getBuffer(get_result.result.link)
+                    lolhuman.sendMessage(from, buffer, video, { quoted: lol })
+                    break
+
+                    // Random Image //
                 case 'art':
                 case 'bts':
                 case 'exo':
@@ -688,6 +698,8 @@ async function starts() {
                         fs.unlinkSync(rano)
                     })
                     break
+
+                    // Textprome //
                 case 'blackpink':
                 case 'neon':
                 case 'greenneon':
@@ -726,6 +738,8 @@ async function starts() {
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/textprome/${command}?apikey=${apikey}&text=${txt}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
+
+                    // Photo Oxy //
                 case 'shadow':
                 case 'cup':
                 case 'cup1':
@@ -756,6 +770,8 @@ async function starts() {
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/photooxy1/${command}?apikey=${apikey}&text=${txt}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
+
+                    // Ephoto 360 //
                 case 'wetglass':
                 case 'multicolor3d':
                 case 'watercolor':

@@ -89,6 +89,9 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 ### Entertainment
 * `Wancak`
 
+### Photo Editor
+* `Triggered`
+
 ### Creator
 * `TTP`
 * `Photo Editor`
