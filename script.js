@@ -155,6 +155,12 @@ async function starts() {
                     txt = txt.replace(/<u>/g, "").replace(/<\/u>/g, "")
                     reply(txt)
                     break
+                case 'alquranaudio':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} 18 or ${prefix + command} 18/10`)
+                    surah = args[0]
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/quran/audio/${surah}?apikey=${apikey}`)
+                    lolhuman.sendMessage(from, buffer, audio, { quoted: lol, mimetype: Mimetype.mp4Audio })
+                    break
                 case 'quotes':
                     quotes = await fetchJson(`http://api.lolhuman.xyz/api/random/quotes?apikey=${apikey}`)
                     quotes = quotes.result
@@ -469,7 +475,7 @@ async function starts() {
                 case 'wait':
                     if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
                         const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
-                        const filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia);
+                        const filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
                         const form = new FormData();
                         const stats = fs.statSync(filePath);
                         const fileSizeInBytes = stats.size;
@@ -481,8 +487,8 @@ async function starts() {
                             body: form
                         }
                         get_result = await fetchJson(`http://api.lolhuman.xyz/api/wait?apikey=${apikey}`, {...options })
+                        fs.unlinkSync(filePath)
                         get_result = get_result.result
-                        console.log(get_result)
                         ini_video = await getBuffer(get_result.video)
                         txt = `Anilist id : ${get_result.anilist_id}\n`
                         txt += `MAL id : ${get_result.mal_id}\n`
@@ -596,6 +602,85 @@ async function starts() {
                     buffer = await getBuffer(get_result.result.link)
                     lolhuman.sendMessage(from, buffer, video, { quoted: lol })
                     break
+                case 'nsfwcheck':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        const filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        const form = new FormData();
+                        const stats = fs.statSync(filePath);
+                        const fileSizeInBytes = stats.size;
+                        const fileStream = fs.createReadStream(filePath);
+                        form.append('img', fileStream, { knownLength: fileSizeInBytes });
+                        const options = {
+                            method: 'POST',
+                            credentials: 'include',
+                            body: form
+                        }
+                        get_result = await fetchJson(`http://api.lolhuman.xyz/api/nsfwcheck?apikey=${apikey}`, {...options })
+                        fs.unlinkSync(filePath)
+                        get_result = get_result.result
+                        is_nsfw = "No"
+                        if (Number(get_result.replace("%", "")) >= 50) is_nsfw = "Yes"
+                        reply(`Is NSFW? ${is_nsfw}\nNSFW Score : ${get_result}`)
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                    }
+                    break
+                case 'semoji':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} 😭`)
+                    emoji = args[0]
+                    try {
+                        emoji = encodeURI(emoji[0])
+                    } catch {
+                        emoji = encodeURI(emoji)
+                    }
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/smoji/${emoji}?apikey=${apikey}`)
+                    lolhuman.sendMessage(from, buffer, sticker, { quoted: lol })
+                    break
+                case 'fakedonald':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} LoL Human`)
+                    txt = args.join(" ")
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/tweettrump?apikey=${apikey}&text=${txt}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'spamsms':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} 08303030303030`)
+                    nomor = args[0]
+                    await fetchJson(`http://api.lolhuman.xyz/api/sms/spam1?apikey=${apikey}&nomor=${nomor}`)
+                    await fetchJson(`http://api.lolhuman.xyz/api/sms/spam2?apikey=${apikey}&nomor=${nomor}`)
+                    await fetchJson(`http://api.lolhuman.xyz/api/sms/spam3?apikey=${apikey}&nomor=${nomor}`)
+                    await fetchJson(`http://api.lolhuman.xyz/api/sms/spam4?apikey=${apikey}&nomor=${nomor}`)
+                    await fetchJson(`http://api.lolhuman.xyz/api/sms/spam5?apikey=${apikey}&nomor=${nomor}`)
+                    await fetchJson(`http://api.lolhuman.xyz/api/sms/spam6?apikey=${apikey}&nomor=${nomor}`)
+                    await fetchJson(`http://api.lolhuman.xyz/api/sms/spam7?apikey=${apikey}&nomor=${nomor}`)
+                    await fetchJson(`http://api.lolhuman.xyz/api/sms/spam8?apikey=${apikey}&nomor=${nomor}`)
+                    reply("Success")
+                    break
+                case 'faketoko':
+                    var punya_wa = "0@s.whatsapp.net"
+                    var buffer = await getBuffer("https://i.ibb.co/JdfQ73m/photo-2021-02-05-10-13-39.jpg")
+                    const ini_cstoko = {
+                        contextInfo: {
+                            participant: punya_wa,
+                            remoteJid: 'status@broadcast',
+                            quotedMessage: {
+                                productMessage: {
+                                    product: {
+                                        currencyCode: "IDR",
+                                        title: "LoL Human",
+                                        priceAmount1000: 10000000,
+                                        productImageCount: 1,
+                                        productImage: {
+                                            jpegThumbnail: buffer
+                                        }
+                                    },
+                                    businessOwnerJid: "0@s.whatsapp.net"
+                                }
+                            }
+                        }
+                    }
+                    lolhuman.sendMessage(from, "LoL Human REST APIs", text, ini_cstoko)
+                    break
 
                     // Random Image //
                 case 'art':
@@ -611,13 +696,9 @@ async function starts() {
                 case 'shinobu':
                 case 'megumin':
                 case 'wallnime':
-                    buffer = await getBuffer(`
-                    http: //api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`)
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
-                case 'neko':
-                case 'waifu':
-                case 'loli':
                 case 'chiisaihentai':
                 case 'trap':
                 case 'blowjob':
@@ -751,7 +832,6 @@ async function starts() {
                 case 'love':
                 case 'coffe':
                 case 'woodheart':
-                case 'flowerheart':
                 case 'woodenboard':
                 case 'summer3d':
                 case 'wolfmetal':
@@ -817,8 +897,10 @@ async function starts() {
                     }
             }
         } catch (e) {
-            const time_error = moment.tz('Asia/Jakarta').format('HH:mm:ss')
-            console.log(color(time_error, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.line, "red"))
+            if (!e.includes("this.isZero")) {
+                const time_error = moment.tz('Asia/Jakarta').format('HH:mm:ss')
+                console.log(color(time_error, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.line, "red"))
+            }
         }
     })
 }
