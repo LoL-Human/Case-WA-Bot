@@ -58,6 +58,8 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * `Pixiv Download`
 * `XNXX`
 * `XNXX Search`
+* `Xhmaster`
+* `Xhmaster Search`
 
 ### Text Maker
 * `Textprome`

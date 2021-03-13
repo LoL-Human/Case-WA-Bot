@@ -876,10 +876,25 @@ async function starts() {
                 case 'summersand':
                 case 'horrorblood':
                 case 'thunder':
-                case 'christmas':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} text\nExample: ${prefix + command} LoL Human`)
                     txt = args.join(" ")
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/textprome/${command}?apikey=${apikey}&text=${txt}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'pornhub':
+                case 'glitch':
+                case 'avenger':
+                case 'space':
+                case 'ninjalogo':
+                case 'marvelstudio':
+                case 'lionlogo':
+                case 'wolflogo':
+                case 'steel3d':
+                case 'wallgravity':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} text\nExample: ${prefix + command} LoL Human`)
+                    txt1 = args[0]
+                    txt2 = args[1]
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/textprome2/${command}?apikey=${apikey}&text1=${txt1}&text2=${txt2}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
 
@@ -911,6 +926,16 @@ async function starts() {
                     if (args.length == 0) return reply(`Usage: ${prefix + command} text\nExample: ${prefix + command} LoL Human`)
                     txt = args.join(" ")
                     buffer = await getBuffer(`http://api.lolhuman.xyz/api/photooxy1/${command}?apikey=${apikey}&text=${txt}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
+                case 'tiktok':
+                case 'arcade8bit':
+                case 'battlefield4':
+                case 'pubg':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} text\nExample: ${prefix + command} LoL Human`)
+                    txt1 = args[0]
+                    txt2 = args[1]
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/photooxy2/${command}?apikey=${apikey}&text1=${txt1}&text2=${txt2}`)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
 
