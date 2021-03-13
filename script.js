@@ -93,6 +93,31 @@ async function starts() {
             const mentions = (teks, memberr, id) => {
                 (id == null || id == undefined || id == false) ? lolhuman.sendMessage(from, teks.trim(), extendedText, { contextInfo: { "mentionedJid": memberr } }): lolhuman.sendMessage(from, teks.trim(), extendedText, { quoted: lol, contextInfo: { "mentionedJid": memberr } })
             }
+            async function faketoko(teks, url_image = "https://i.ibb.co/JdfQ73m/photo-2021-02-05-10-13-39.jpg", title = "LoL Human", code = "IDR", price = 10000000) {
+                var punya_wa = "0@s.whatsapp.net"
+                var buffer = await getBuffer(url_image)
+                const ini_cstoko = {
+                    contextInfo: {
+                        participant: punya_wa,
+                        remoteJid: 'status@broadcast',
+                        quotedMessage: {
+                            productMessage: {
+                                product: {
+                                    currencyCode: code,
+                                    title: title,
+                                    priceAmount1000: price,
+                                    productImageCount: 1,
+                                    productImage: {
+                                        jpegThumbnail: buffer
+                                    }
+                                },
+                                businessOwnerJid: "0@s.whatsapp.net"
+                            }
+                        }
+                    }
+                }
+                lolhuman.sendMessage(from, teks, text, ini_cstoko)
+            }
 
             colors = ['red', 'white', 'black', 'blue', 'yellow', 'green', 'aqua']
             const isMedia = (type === 'imageMessage' || type === 'videoMessage')
@@ -335,16 +360,13 @@ async function starts() {
                         const ran = getRandom('.webp')
                         await ffmpeg(`./${media}`)
                             .input(media)
-                            .on('start', function(cmd) {
-                                console.log(`Started : ${cmd}`)
-                            })
                             .on('error', function(err) {
                                 console.log(`Error : ${err}`)
                                 fs.unlinkSync(media)
+                                fs.unlinkSync(ran)
                                 reply(mess.error.stick)
                             })
                             .on('end', function() {
-                                console.log('Finish')
                                 buff = fs.readFileSync(ran)
                                 lolhuman.sendMessage(from, buff, sticker, { quoted: lol })
                                 fs.unlinkSync(media)
@@ -503,6 +525,42 @@ async function starts() {
                         reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
                     }
                     break
+                case 'xhamstersearch':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} Japanese`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/xhamstersearch?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    txt = ""
+                    for (var x in get_result) {
+                        txt += `Title : ${get_result[x].title}\n`
+                        txt += `Views : ${get_result[x].views}\n`
+                        txt += `Duration : ${get_result[x].duration}\n`
+                        txt += `Link : ${get_result[x].link}\n\n`
+                    }
+                    reply(txt)
+                    break
+                case 'xhamster':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} https://xhamster.com/videos/party-with-friends-end-in-awesome-fucking-5798407`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/xhamster?apikey=${apikey}&url=${query}`)
+                    get_result = get_result.result
+                    txt = `Title : ${get_result.title}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `Uploader : ${get_result.author}\n`
+                    txt += `Upload : ${get_result.upload}\n`
+                    txt += `View : ${get_result.views}\n`
+                    txt += `Rating : ${get_result.rating}\n`
+                    txt += `Like : ${get_result.likes}\n`
+                    txt += `Dislike : ${get_result.dislikes}\n`
+                    txt += `Comment : ${get_result.comments}\n`
+                    txt += "Link : \n"
+                    link = get_result.link
+                    for (var x in link) {
+                        txt += `${link[x].type} - ${link[x].link}\n\n`
+                    }
+                    thumbnail = await getBuffer(get_result.thumbnail)
+                    lolhuman.sendMessage(from, thumbnail, image, { quoted: lol, caption: txt })
+                    break
                 case 'xnxxsearch':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} Japanese`)
                     query = args.join(" ")
@@ -520,13 +578,13 @@ async function starts() {
                     reply(txt)
                     break
                 case 'xnxx':
-                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} Japanese`)
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} https://www.xnxx.com/video-uy5a73b/mom_is_horny_-_brooklyn`)
                     query = args.join(" ")
                     get_result = await fetchJson(`http://api.lolhuman.xyz/api/xnxx?apikey=${apikey}&url=${query}`)
                     get_result = get_result.result
                     txt = `Title : ${get_result.title}\n`
                     txt += `Duration : ${get_result.duration}\n`
-                    txt += `View : ${get_result.title}\n`
+                    txt += `View : ${get_result.view}\n`
                     txt += `Rating : ${get_result.rating}\n`
                     txt += `Like : ${get_result.like}\n`
                     txt += `Dislike : ${get_result.dislike}\n`
@@ -657,29 +715,34 @@ async function starts() {
                     reply("Success")
                     break
                 case 'faketoko':
-                    var punya_wa = "0@s.whatsapp.net"
-                    var buffer = await getBuffer("https://i.ibb.co/JdfQ73m/photo-2021-02-05-10-13-39.jpg")
-                    const ini_cstoko = {
-                        contextInfo: {
-                            participant: punya_wa,
-                            remoteJid: 'status@broadcast',
-                            quotedMessage: {
-                                productMessage: {
-                                    product: {
-                                        currencyCode: "IDR",
-                                        title: "LoL Human",
-                                        priceAmount1000: 10000000,
-                                        productImageCount: 1,
-                                        productImage: {
-                                            jpegThumbnail: buffer
-                                        }
-                                    },
-                                    businessOwnerJid: "0@s.whatsapp.net"
-                                }
-                            }
+                    await faketoko("Tahu Bacem")
+                    break
+                case 'asupan':
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/asupan?apikey=${apikey}`)
+                    buffer = await getBuffer(get_result.result)
+                    lolhuman.sendMessage(from, buffer, video, { quoted: lol, mimetype: Mimetype.mp4, filename: "asupan.mp4" })
+                    break
+                case 'nekopoi':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} https://nekopoi.care/isekai-harem-monogatari-episode-4-subtitle-indonesia/`)
+                    ini_url = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/nekopoi?apikey=${apikey}&url=${ini_url}`)
+                    get_result = get_result.result
+                    console.log(get_result)
+                    txt = `Title : ${get_result.anime}\n`
+                    txt += `Porducers : ${get_result.producers}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `Size : ${get_result.size}\n`
+                    txt += `Sinopsis : ${get_result.sinopsis}\n`
+                    link = get_result.link
+                    for (var x in link) {
+                        txt += `\n${link[x].name}\n`
+                        link_dl = link[x].link
+                        for (var y in link_dl) {
+                            txt += `${y} - ${link_dl[y]}\n`
                         }
                     }
-                    lolhuman.sendMessage(from, "LoL Human REST APIs", text, ini_cstoko)
+                    buffer = await getBuffer(get_result.thumb)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
                     break
 
                     // Random Image //
@@ -897,6 +960,7 @@ async function starts() {
                     }
             }
         } catch (e) {
+            e = String(e)
             if (!e.includes("this.isZero")) {
                 const time_error = moment.tz('Asia/Jakarta').format('HH:mm:ss')
                 console.log(color(time_error, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.line, "red"))
