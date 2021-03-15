@@ -93,7 +93,7 @@ async function starts() {
             const mentions = (teks, memberr, id) => {
                 (id == null || id == undefined || id == false) ? lolhuman.sendMessage(from, teks.trim(), extendedText, { contextInfo: { "mentionedJid": memberr } }): lolhuman.sendMessage(from, teks.trim(), extendedText, { quoted: lol, contextInfo: { "mentionedJid": memberr } })
             }
-            async function faketoko(teks, url_image = "https://i.ibb.co/JdfQ73m/photo-2021-02-05-10-13-39.jpg", title = "LoL Human", code = "IDR", price = 10000000) {
+            async function faketoko(teks, url_image, title, code, price) {
                 var punya_wa = "0@s.whatsapp.net"
                 var buffer = await getBuffer(url_image)
                 const ini_cstoko = {
@@ -715,7 +715,7 @@ async function starts() {
                     reply("Success")
                     break
                 case 'faketoko':
-                    await faketoko("Tahu Bacem")
+                    await faketoko(teks = "Tahu Bacem", url_image = "https://i.ibb.co/JdfQ73m/photo-2021-02-05-10-13-39.jpg", title = "LoL Human", code = "IDR", price = 1000000)
                     break
                 case 'asupan':
                     get_result = await fetchJson(`http://api.lolhuman.xyz/api/asupan?apikey=${apikey}`)
@@ -743,6 +743,34 @@ async function starts() {
                     }
                     buffer = await getBuffer(get_result.thumb)
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol, caption: txt })
+                    break
+                case 'spotify':
+                    url = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/spotify?apikey=${apikey}&url=${url}`)
+                    get_result = get_result.result
+                    txt = `Title : ${get_result.title}\n`
+                    txt += `Artists : ${get_result.artists}\n`
+                    txt += `Duration : ${get_result.duration}\n`
+                    txt += `Popularity : ${get_result.popularity}\n`
+                    txt += `Preview : ${get_result.preview_url}\n`
+                    thumbnail = await getBuffer(get_result.thumbnail)
+                    lolhuman.sendMessage(from, thumbnail, image, { quoted: lol, caption: txt })
+                    get_audio = await getBuffer(get_result.link[3].link)
+                    lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_result.title}.mp3`, quoted: lol })
+                    break
+                case 'spotifysearch':
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/spotifysearch?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    txt = ""
+                    for (var x in get_result) {
+                        txt += `Title : ${get_result[x].title}\n`
+                        txt += `Artists : ${get_result[x].artists}\n`
+                        txt += `Duration : ${get_result[x].duration}\n`
+                        txt += `Link : ${get_result[x].link}\n`
+                        txt += `Preview : ${get_result[x].preview_url}\n\n\n`
+                    }
+                    reply(txt)
                     break
 
                     // Random Image //
