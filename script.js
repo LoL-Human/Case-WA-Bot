@@ -404,6 +404,21 @@ async function starts() {
                     buffer = await getBuffer(ini_url)
                     lolhuman.sendMessage(from, buffer, video, { quoted: lol })
                     break
+                case 'ytsearch':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} Tahu Bacem`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/ytsearch?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    txt = ""
+                    for (var x in get_result) {
+                        txt += `Title : ${get_result[x].title}\n`
+                        txt += `Views : ${get_result[x].views}\n`
+                        txt += `Published : ${get_result[x].published}\n`
+                        txt += `Thumbnail : ${get_result[x].thumbnail}\n`
+                        txt += `Link : https://www.youtube.com/watch?v=${get_result[x].videoId}\n\n`
+                    }
+                    reply(txt)
+                    break
                 case 'ytplay':
                     query = args.join(" ")
                     get_result = await fetchJson(`http://api.lolhuman.xyz/api/ytplay?apikey=${apikey}&query=${query}`)
@@ -626,7 +641,6 @@ async function starts() {
                     txt = "Ongoing Drakor\n\n"
                     for (var x in get_result) {
                         txt += `Title : ${get_result[x].title}\n`
-                        txt += `Category : ${get_result[x].category}\n`
                         txt += `Link : ${get_result[x].link}\n`
                         txt += `Thumbnail : ${get_result[x].thumbnail}\n`
                         txt += `Year : ${get_result[x].category}\n`
@@ -771,6 +785,21 @@ async function starts() {
                         txt += `Preview : ${get_result[x].preview_url}\n\n\n`
                     }
                     reply(txt)
+                    break
+                case 'jooxplay':
+                    query = args.join(" ")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/jooxplay?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    txt = `Title : ${get_result.info.song}\n`
+                    txt += `Artists : ${get_result.info.singer}\n`
+                    txt += `Duration : ${get_result.info.duration}\n`
+                    txt += `Album : ${get_result.info.album}\n`
+                    txt += `Uploaded : ${get_result.info.date}\n`
+                    txt += `Lirik :\n ${get_result.lirik}\n`
+                    thumbnail = await getBuffer(get_result.image)
+                    lolhuman.sendMessage(from, thumbnail, image, { quoted: lol, caption: txt })
+                    get_audio = await getBuffer(get_result.audio[0].link)
+                    lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_result.info.song}.mp3`, quoted: lol })
                     break
 
                     // Random Image //
@@ -1008,6 +1037,7 @@ async function starts() {
                         reply(`Sorry bro, command *${prefix}${command}* gk ada di list *${prefix}help*`)
                     }
                     if (!isGroup && !isCmd) {
+                        await lolhuman.updatePresence(from, Presence.composing)
                         simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${budy}`)
                         reply(simi.result)
                     }
