@@ -242,7 +242,7 @@ const help = (prefix) => {
 exports.help = help
 
 const donate = (sender) => {
-    return `Isi punya situ ae ngab`
+    return `Isi punya situ ae ngabs`
 }
 exports.donate = donate
 

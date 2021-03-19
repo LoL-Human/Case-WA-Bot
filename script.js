@@ -1069,7 +1069,7 @@ async function starts() {
             e = String(e)
             if (!e.includes("this.isZero")) {
                 const time_error = moment.tz('Asia/Jakarta').format('HH:mm:ss')
-                console.log(color(time_error, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'), color("in", "red"), color(e.line, "red"))
+                console.log(color(time_error, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'))
             }
         }
     })
