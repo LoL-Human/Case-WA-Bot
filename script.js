@@ -504,9 +504,11 @@ async function starts() {
                     lolhuman.sendMessage(from, buffer, image, { quoted: lol })
                     break
                 case 'ttp':
+                case 'ttp2':
+                case 'ttp3':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} LoL Human`)
                     txt = args.join(" ")
-                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/ttp?apikey=${apikey}&text=${txt}`)
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/${command}?apikey=${apikey}&text=${txt}`)
                     lolhuman.sendMessage(from, buffer, sticker, { quoted: lol })
                     break
                 case 'wait':
@@ -801,7 +803,28 @@ async function starts() {
                     get_audio = await getBuffer(get_result.audio[0].link)
                     lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_result.info.song}.mp3`, quoted: lol })
                     break
-
+                case 'ktpmaker':
+                    if (args.length == 0) return reply(`Usage: ${prefix + command} nik|provinsi|kabupaten|nama|tempat, tanggal lahir|jenis kelamin|jalan|rt/rw|kelurahan|kecamatan|agama|status nikah|pekerjaan|warga negara|berlaku sampai|url_image\n\nExample: ${prefix + command} 456127893132123|bumipertiwi|fatamorgana|LoL Human|mars, 99-99-9999|belum ditemukan|jl wardoyo|999/999|turese|imtuni|alhamdulillah islam|jomblo kack|mikirin dia|indo ori no kw|hari kiamat|https://i.ibb.co/Xb2pZ88/test.jpg`)
+                    get_args = args.join(" ").split("|")
+                    nik = get_args[0]
+                    prov = get_args[1]
+                    kabu = get_args[2]
+                    name = get_args[3]
+                    ttl = get_args[4]
+                    jk = get_args[5]
+                    jl = get_args[6]
+                    rtrw = get_args[7]
+                    lurah = get_args[8]
+                    camat = get_args[9]
+                    agama = get_args[10]
+                    nikah = get_args[11]
+                    kerja = get_args[12]
+                    warga = get_args[13]
+                    until = get_args[14]
+                    img = get_args[15]
+                    buffer = await getBuffer(`http://api.lolhuman.xyz/api/ktpmaker?apikey=${apikey}&nik=${nik}&prov=${prov}&kabu=${kabu}&name=${name}&ttl=${ttl}&jk=${jk}&jl=${jl}&rtrw=${rtrw}&lurah=${lurah}&camat=${camat}&agama=${agama}&nikah=${nikah}&kerja=${kerja}&warga=${warga}&until=${until}&img=${img}`)
+                    lolhuman.sendMessage(from, buffer, image, { quoted: lol })
+                    break
                     // Random Image //
                 case 'art':
                 case 'bts':
