@@ -4,6 +4,7 @@ const help = (prefix) => {
 ├ • ${prefix}help
 ├ • ${prefix}donate
 ├ • ${prefix}sticker
+├ • ${prefix}stickerwm
 ├ • ${prefix}broadcast
 │
 ├──「 Islami 」
@@ -28,12 +29,14 @@ const help = (prefix) => {
 ├ • ${prefix}pixivdl url_pixiv
 ├ • ${prefix}telesticker url_pack
 │
-├──「 Image Search 」
+├──「 Movie & Story 」
 ├ • ${prefix}drakorongoing
 ├ • ${prefix}lk21 query
 │
 ├──「 Image Search 」
 ├ • ${prefix}konachan query
+├ • ${prefix}gimage query
+├ • ${prefix}gimage2 query
 │
 ├──「 Random Text 」
 ├ • ${prefix}quotes
