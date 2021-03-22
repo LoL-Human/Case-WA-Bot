@@ -109,7 +109,7 @@ async function starts() {
                                     priceAmount1000: price,
                                     productImageCount: 1,
                                     productImage: {
-                                        jpegThumbnail: buffer
+                                        jpegThumbnail: ini_buffer
                                     }
                                 },
                                 businessOwnerJid: "0@s.whatsapp.net"
@@ -144,7 +144,7 @@ async function starts() {
                             quotedMessage: {
                                 imageMessage: {
                                     caption: ini_text,
-                                    jpegThumbnail: buffer
+                                    jpegThumbnail: ini_buffer
                                 }
                             }
                         }
@@ -692,7 +692,7 @@ async function starts() {
                     ranp = getRandom('.gif')
                     rano = getRandom('.webp')
                     ini_buffer = `http://api.lolhuman.xyz/api/editor/triggered?apikey=${apikey}&img=${ini_url}`
-                    exec(`wget "${buffer}" -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
+                    exec(`wget "${ini_buffer}" -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
                         fs.unlinkSync(ranp)
                         buff = fs.readFileSync(rano)
                         lolhuman.sendMessage(from, buff, sticker, { quoted: lol })
@@ -983,7 +983,7 @@ async function starts() {
                     ranp = getRandom('.gif')
                     rano = getRandom('.webp')
                     ini_buffer = `http://api.lolhuman.xyz/api/random2/${command}?apikey=${apikey}`
-                    exec(`wget ${buffer} -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
+                    exec(`wget ${ini_buffer} -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
                         fs.unlinkSync(ranp)
                         buff = fs.readFileSync(rano)
                         lolhuman.sendMessage(from, buff, sticker, { quoted: lol })
