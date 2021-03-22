@@ -16,13 +16,21 @@ const help = (prefix) => {
 ├ • ${prefix}ytplay query
 ├ • ${prefix}ytmp3 url_video
 ├ • ${prefix}ytmp4 url_video
+├ • ${prefix}tiktoknowm url_video
 ├ • ${prefix}igdl url_post
 ├ • ${prefix}fbdl url_video
+├ • ${prefix}jooxplay query
+├ • ${prefix}spotify url_music
+├ • ${prefix}spotifysearch query
 ├ • ${prefix}pinterest query
 ├ • ${prefix}pinterestdl url_pinterest
 ├ • ${prefix}pixiv query
 ├ • ${prefix}pixivdl url_pixiv
 ├ • ${prefix}telesticker url_pack
+│
+├──「 Image Search 」
+├ • ${prefix}drakorongoing
+├ • ${prefix}lk21 query
 │
 ├──「 Image Search 」
 ├ • ${prefix}konachan query
@@ -33,24 +41,34 @@ const help = (prefix) => {
 │
 ├──「 AniManga 」
 ├ • ${prefix}wait
+├ • ${prefix}quotesanime
 ├ • ${prefix}kusonime url_kusonime
 ├ • ${prefix}kusonimesearch query
 ├ • ${prefix}otakudesu url_otakudesu
 ├ • ${prefix}otakudesusearch query
 ├ • ${prefix}nhentai kode_bom
 ├ • ${prefix}nhentaipdf kode_bom
+├ • ${prefix}nekopoi url
+├ • ${prefix}nekopoisearch query
 │
 ├──「 Information 」
 ├ • ${prefix}jadwaltv channel
+├ • ${prefix}nsfwcheck
 │
 ├──「 Entertainment 」
+├ • ${prefix}asupan
 ├ • ${prefix}wancak
 │
 ├──「 Creator 」
 ├ • ${prefix}ttp text
 ├ • ${prefix}ttp2 text
 ├ • ${prefix}ttp3 text
+├ • ${prefix}smoji emoji
+├ • ${prefix}fakedonald text
 ├ • ${prefix}ktpmaker
+│
+├──「 Other 」
+├ • ${prefix}spamsms nomor
 │
 ├──「 Text Pro Me 」
 ├ • ${prefix}blackpink text

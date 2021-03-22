@@ -30,7 +30,7 @@
         "needle": "^2.5.2",
         "node-fetch": "^2.6.1",
         "performance-now": "^2.1.0",
-        "request": "^2.81.0",
+        "request": "^2.88.2",
         "spinnies": "^0.5.1"
     },
     "devDependencies": {}
