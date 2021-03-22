@@ -178,9 +178,9 @@ async function starts() {
                         indo = test.indonesia
                         ini_txt += `${arab}\n${nomor}. ${latin}\n${indo}\n\n`
                     }
-                    ini_txt = txt.replace(/<u>/g, "").replace(/<\/u>/g, "")
-                    ini_txt = txt.replace(/<strong>/g, "").replace(/<\/strong>/g, "")
-                    ini_txt = txt.replace(/<u>/g, "").replace(/<\/u>/g, "")
+                    ini_txt = ini_txt.replace(/<u>/g, "").replace(/<\/u>/g, "")
+                    ini_txt = ini_txt.replace(/<strong>/g, "").replace(/<\/strong>/g, "")
+                    ini_txt = ini_txt.replace(/<u>/g, "").replace(/<\/u>/g, "")
                     reply(ini_txt)
                     break
                 case 'alquranaudio':
@@ -544,7 +544,7 @@ async function starts() {
                 case 'ttp4':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
-                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/${command}?apikey=${apikey}&text=${txt}`)
+                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/${command}?apikey=${apikey}&text=${ini_txt}`)
                     lolhuman.sendMessage(from, ini_buffer, sticker, { quoted: lol })
                     break
                 case 'wait':
@@ -749,7 +749,7 @@ async function starts() {
                 case 'fakedonald':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} query\nExample: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
-                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/tweettrump?apikey=${apikey}&text=${txt}`)
+                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/tweettrump?apikey=${apikey}&text=${ini_txt}`)
                     lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
                 case 'spamsms':
@@ -1026,7 +1026,7 @@ async function starts() {
                 case 'thunder':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} text\nExample: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
-                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/textprome/${command}?apikey=${apikey}&text=${txt}`)
+                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/textprome/${command}?apikey=${apikey}&text=${ini_txt}`)
                     lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
                 case 'pornhub':
@@ -1073,7 +1073,7 @@ async function starts() {
                 case 'carvedwood':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} text\nExample: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
-                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/photooxy1/${command}?apikey=${apikey}&text=${txt}`)
+                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/photooxy1/${command}?apikey=${apikey}&text=${ini_txt}`)
                     lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
                 case 'tiktok':
@@ -1120,7 +1120,7 @@ async function starts() {
                 case 'freefire':
                     if (args.length == 0) return reply(`Usage: ${prefix + command} text\nExample: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
-                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/ephoto1/${command}?apikey=${apikey}&text=${txt}`)
+                    ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/ephoto1/${command}?apikey=${apikey}&text=${ini_txt}`)
                     lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
                 default:
