@@ -8,16 +8,25 @@ const help = (prefix) => {
 ├ • ${prefix}broadcast
 │
 ├──「 Islami 」
+├ • ${prefix}listsurah
+├ • ${prefix}asmaulhusna
 ├ • ${prefix}alquran no_surah
 ├ • ${prefix}alquranaudio no_surah
 ├ • ${prefix}alquranaudio no_surah/no_ayat
+├ • ${prefix}alquranaudio no_surah/no_ayat1-no_ayat2
+├ • ${prefix}kisahnabi nama_nabi
+├ • ${prefix}jadwalsholat daerah
 │
 ├──「 Downloader 」
 ├ • ${prefix}ytsearch query
 ├ • ${prefix}ytplay query
+├ • ${prefix}ytplay2 query
 ├ • ${prefix}ytmp3 url_video
+├ • ${prefix}ytmp32 url_video
 ├ • ${prefix}ytmp4 url_video
+├ • ${prefix}ytmp42 url_video
 ├ • ${prefix}tiktoknowm url_video
+├ • ${prefix}tiktokmusic url_video
 ├ • ${prefix}igdl url_post
 ├ • ${prefix}fbdl url_video
 ├ • ${prefix}jooxplay query
@@ -27,35 +36,73 @@ const help = (prefix) => {
 ├ • ${prefix}pinterestdl url_pinterest
 ├ • ${prefix}pixiv query
 ├ • ${prefix}pixivdl url_pixiv
+├ • ${prefix}zippyshare url_zippyshare
 ├ • ${prefix}telesticker url_pack
 │
 ├──「 Movie & Story 」
 ├ • ${prefix}drakorongoing
 ├ • ${prefix}lk21 query
+├ • ${prefix}wattpad url_wattpad
+├ • ${prefix}wattpadsearch query
+├ • ${prefix}cerpen
+├ • ${prefix}ceritahoror
 │
-├──「 Image Search 」
-├ • ${prefix}konachan query
+├──「 Searching 」
+├ • ${prefix}shopee query
 ├ • ${prefix}gimage query
+├ • ${prefix}google query
 ├ • ${prefix}gimage2 query
+├ • ${prefix}konachan query
+├ • ${prefix}playstore query
+├ • ${prefix}stickerwa query
+├ • ${prefix}wallpapersearch query
+├ • ${prefix}wallpapersearch2 query
 │
 ├──「 Random Text 」
 ├ • ${prefix}quotes
 ├ • ${prefix}quotesdilan
+├ • ${prefix}quotesanime
+├ • ${prefix}quotesimage
+├ • ${prefix}faktaunik
+├ • ${prefix}katabijak
+├ • ${prefix}pantun
+├ • ${prefix}bucin
+├ • ${prefix}randomnama
 │
 ├──「 AniManga 」
 ├ • ${prefix}wait
 ├ • ${prefix}quotesanime
+├ • ${prefix}manga query
+├ • ${prefix}anime query
+├ • ${prefix}character query
 ├ • ${prefix}kusonime url_kusonime
 ├ • ${prefix}kusonimesearch query
 ├ • ${prefix}otakudesu url_otakudesu
 ├ • ${prefix}otakudesusearch query
 ├ • ${prefix}nhentai kode_bom
 ├ • ${prefix}nhentaipdf kode_bom
+├ • ${prefix}nhentaisearch query
 ├ • ${prefix}nekopoi url
 ├ • ${prefix}nekopoisearch query
 │
 ├──「 Information 」
 ├ • ${prefix}jadwaltv channel
+├ • ${prefix}jadwaltvnow
+├ • ${prefix}jadwalbola
+├ • ${prefix}heroml hero_name
+├ • ${prefix}wikipedia query
+├ • ${prefix}translate kode_negara text
+├ • ${prefix}brainly query
+├ • ${prefix}newsinfo
+├ • ${prefix}cnnindonesia
+├ • ${prefix}cnnnasional
+├ • ${prefix}cnninternasional
+├ • ${prefix}infogempa
+├ • ${prefix}lirik query
+├ • ${prefix}cuaca daerah
+├ • ${prefix}kodepos query
+├ • ${prefix}indbeasiswa
+├ • ${prefix}hoax
 ├ • ${prefix}nsfwcheck
 │
 ├──「 Entertainment 」
@@ -66,9 +113,18 @@ const help = (prefix) => {
 ├ • ${prefix}ttp text
 ├ • ${prefix}ttp2 text
 ├ • ${prefix}ttp3 text
+├ • ${prefix}ttp4 text
+├ • ${prefix}attp text
 ├ • ${prefix}smoji emoji
 ├ • ${prefix}fakedonald text
 ├ • ${prefix}ktpmaker
+│
+├──「 Primbon 」
+├ • ${prefix}artinama name
+├ • ${prefix}jodoh name1 & name2 
+├ • ${prefix}weton tanggal bulan tahun
+├ • ${prefix}jadian tanggal bulan tahun
+├ • ${prefix}tebakumur name
 │
 ├──「 Other 」
 ├ • ${prefix}spamsms nomor
@@ -268,7 +324,7 @@ const donate = (sender) => {
 exports.donate = donate
 
 
-const bahasa = (prefix) => {
+const bahasa = () => {
     return `
 List Bahasa :
   af: Afrikaans
@@ -324,5 +380,4 @@ List Bahasa :
   cy: Welsh
 `
 }
-exports.bahasa = bahasa
 exports.bahasa = bahasa
