@@ -1505,6 +1505,33 @@ async function starts() {
                     lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
 
+                    // Converter
+                case 'togif':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage)) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        file_name = getRandom(".gif")
+                        ini_txt = args.join(" ").split("|")
+                        request({
+                            url: `http://api.lolhuman.xyz/api/convert/togif?apikey=${apikey}`,
+                            method: 'POST',
+                            formData: {
+                                "img": fs.createReadStream(filePath),
+                            },
+                            encoding: "binary"
+                        }, function(error, response, body) {
+                            fs.unlinkSync(filePath)
+                            fs.writeFileSync(file_name, body, "binary")
+                            ini_buff = fs.readFileSync(file_name)
+                            lolhuman.sendMessage(from, ini_buff, video, { quoted: lol, mimetype: Mimetype.gif, filename: file_name })
+                            fs.unlinkSync(file_name)
+                        });
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                    }
+                    break
+
+                    // Other
                 case 'spamsms':
                     if (args.length == 0) return reply(`Example: ${prefix + command} 08303030303030`)
                     nomor = args[0]
