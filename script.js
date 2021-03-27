@@ -1388,6 +1388,7 @@ async function starts() {
                     // Creator
                 case 'stickerwm':
                     if ((isMedia && !lol.message.videoMessage || isQuotedImage)) {
+                        if (args.length == 0) return reply(`Example: ${prefix + command} LoL|Human`)
                         const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
                         filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
                         file_name = getRandom(".webp")
@@ -1414,6 +1415,7 @@ async function starts() {
                     break
                 case 'sticker':
                     if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        if (args.length == 0) return reply(`Example: ${prefix + command} LoL|Human`)
                         const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
                         filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia)
                         file_name = getRandom('.webp')
@@ -1433,6 +1435,33 @@ async function starts() {
                         });
                     } else {
                         reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
+                    }
+                    break
+                case 'takestick':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedSticker)) {
+                        if (args.length == 0) return reply(`Example: ${prefix + command} LoL|Human`)
+                        const encmedia = isQuotedSticker ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        file_name = getRandom(".webp")
+                        ini_txt = args.join(" ").split("|")
+                        request({
+                            url: `http://api.lolhuman.xyz/api/convert/towebpauthor?apikey=${apikey}`,
+                            method: 'POST',
+                            formData: {
+                                "img": fs.createReadStream(filePath),
+                                "package": ini_txt[0],
+                                "author": ini_txt[1]
+                            },
+                            encoding: "binary"
+                        }, function(error, response, body) {
+                            fs.unlinkSync(filePath)
+                            fs.writeFileSync(file_name, body, "binary")
+                            ini_buff = fs.readFileSync(file_name)
+                            lolhuman.sendMessage(from, ini_buff, sticker, { quoted: lol })
+                            fs.unlinkSync(file_name)
+                        });
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
                     }
                     break
                 case 'ttp':
@@ -1507,8 +1536,8 @@ async function starts() {
 
                     // Converter
                 case 'togif':
-                    if ((isMedia && !lol.message.videoMessage || isQuotedImage)) {
-                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                    if ((isMedia && !lol.message.videoMessage || isQuotedSticker)) {
+                        const encmedia = isQuotedSticker ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
                         filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
                         file_name = getRandom(".gif")
                         ini_txt = args.join(" ").split("|")
@@ -1523,7 +1552,7 @@ async function starts() {
                             fs.unlinkSync(filePath)
                             fs.writeFileSync(file_name, body, "binary")
                             ini_buff = fs.readFileSync(file_name)
-                            lolhuman.sendMessage(from, ini_buff, video, { quoted: lol, mimetype: Mimetype.gif, filename: file_name })
+                            lolhuman.sendMessage(from, ini_buff, video, { quoted: lol, mimetype: "video/gif", filename: file_name })
                             fs.unlinkSync(file_name)
                         });
                     } else {
