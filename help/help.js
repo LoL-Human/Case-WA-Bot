@@ -6,14 +6,16 @@ const help = (prefix) => {
 ├ • ${prefix}sticker
 ├ • ${prefix}stickerwm
 ├ • ${prefix}broadcast
+├ • ${prefix}hidetag
 │
 ├──「 Islami 」
 ├ • ${prefix}listsurah
 ├ • ${prefix}asmaulhusna
 ├ • ${prefix}alquran no_surah
+├ • ${prefix}alquran no_surah/no_ayat
+├ • ${prefix}alquran no_surah/no_ayat1-no_ayat2
 ├ • ${prefix}alquranaudio no_surah
 ├ • ${prefix}alquranaudio no_surah/no_ayat
-├ • ${prefix}alquranaudio no_surah/no_ayat1-no_ayat2
 ├ • ${prefix}kisahnabi nama_nabi
 ├ • ${prefix}jadwalsholat daerah
 │
@@ -49,8 +51,8 @@ const help = (prefix) => {
 │
 ├──「 Searching 」
 ├ • ${prefix}shopee query
-├ • ${prefix}gimage query
 ├ • ${prefix}google query
+├ • ${prefix}gimage query
 ├ • ${prefix}gimage2 query
 ├ • ${prefix}konachan query
 ├ • ${prefix}playstore query
@@ -71,7 +73,6 @@ const help = (prefix) => {
 │
 ├──「 AniManga 」
 ├ • ${prefix}wait
-├ • ${prefix}quotesanime
 ├ • ${prefix}manga query
 ├ • ${prefix}anime query
 ├ • ${prefix}character query
@@ -90,6 +91,7 @@ const help = (prefix) => {
 ├ • ${prefix}jadwaltvnow
 ├ • ${prefix}jadwalbola
 ├ • ${prefix}heroml hero_name
+├ • ${prefix}genshin character
 ├ • ${prefix}wikipedia query
 ├ • ${prefix}translate kode_negara text
 ├ • ${prefix}brainly query
@@ -127,6 +129,9 @@ const help = (prefix) => {
 ├ • ${prefix}tebakumur name
 │
 ├──「 Other 」
+├ • ${prefix}ssweb link
+├ • ${prefix}ssweb2 link
+├ • ${prefix}shortlink link
 ├ • ${prefix}spamsms nomor
 │
 ├──「 Text Pro Me 」
