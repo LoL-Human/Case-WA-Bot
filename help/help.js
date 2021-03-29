@@ -106,6 +106,7 @@ const help = (prefix) => {
 ├ • ${prefix}indbeasiswa
 ├ • ${prefix}hoax
 ├ • ${prefix}nsfwcheck
+├ • ${prefix}ocr
 │
 ├──「 Entertainment 」
 ├ • ${prefix}asupan

@@ -1181,8 +1181,7 @@ async function starts() {
                             credentials: 'include',
                             body: form
                         }
-                        get_result = await fetchJson(`https://lolhumanocr.herokuapp.com/ocr?apikey=${apikey}`, {...options })
-                        console.log(get_result)
+                        get_result = await fetchJson(`http://api.lolhuman.xyz/api/ocr?apikey=${apikey}`, {...options })
                         fs.unlinkSync(filePath)
                         get_result = get_result.result
                         reply(`Result : ${get_result}`)
