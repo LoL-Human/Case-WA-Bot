@@ -1145,14 +1145,14 @@ async function starts() {
                     break
                 case 'nsfwcheck':
                     if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
-                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
-                        const filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
-                        const form = new FormData();
-                        const stats = fs.statSync(filePath);
-                        const fileSizeInBytes = stats.size;
-                        const fileStream = fs.createReadStream(filePath);
+                        var encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        var filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        var form = new FormData();
+                        var stats = fs.statSync(filePath);
+                        var fileSizeInBytes = stats.size;
+                        var fileStream = fs.createReadStream(filePath);
                         form.append('img', fileStream, { knownLength: fileSizeInBytes });
-                        const options = {
+                        var options = {
                             method: 'POST',
                             credentials: 'include',
                             body: form
@@ -1163,6 +1163,29 @@ async function starts() {
                         is_nsfw = "No"
                         if (Number(get_result.replace("%", "")) >= 50) is_nsfw = "Yes"
                         reply(`Is NSFW? ${is_nsfw}\nNSFW Score : ${get_result}`)
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                    }
+                    break
+                case 'ocr':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        var encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        var filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        var form = new FormData();
+                        var stats = fs.statSync(filePath);
+                        var fileSizeInBytes = stats.size;
+                        var fileStream = fs.createReadStream(filePath);
+                        form.append('img', fileStream, { knownLength: fileSizeInBytes });
+                        var options = {
+                            method: 'POST',
+                            credentials: 'include',
+                            body: form
+                        }
+                        get_result = await fetchJson(`https://lolhumanocr.herokuapp.com/ocr?apikey=${apikey}`, {...options })
+                        console.log(get_result)
+                        fs.unlinkSync(filePath)
+                        get_result = get_result.result
+                        reply(`Result : ${get_result}`)
                     } else {
                         reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
                     }
@@ -1476,7 +1499,7 @@ async function starts() {
                             fs.unlinkSync(file_name)
                         });
                     } else {
-                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                        reply(`Tag sticker yang sudah dikirim`)
                     }
                     break
                 case 'sticker':
