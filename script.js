@@ -44,6 +44,31 @@ async function starts() {
     await lolhuman.connect({ timeoutMs: 30 * 1000 })
     fs.writeFileSync('./lolhuman.json', JSON.stringify(lolhuman.base64EncodedAuthInfo(), null, '\t'))
 
+    lolhuman.on('group-participants-update', async(chat) => {
+        try {
+            mem = chat.participants[0]
+            try {
+                var pp_user = await lolhuman.getProfilePicture(mem)
+            } catch (e) {
+                var pp_user = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60'
+            }
+            if (chat.action == 'add') {
+                ini_user = lolhuman.contacts[mem]
+                ini_img = await getBuffer(`http://api.lolhuman.xyz/api/welcomeimage?apikey=${apikey}&img=${pp_user}&text=${ini_user.notify}`)
+                group_info = await lolhuman.groupMetadata(chat.jid)
+                welkam = `${ini_user.notify}, Welkam to ${group_info.subject}`
+                lolhuman.sendMessage(chat.jid, ini_img, MessageType.image, { caption: welkam })
+            }
+            if (chat.action == 'remove') {
+                ini_user = lolhuman.contacts[mem]
+                ini_out = `${ini_user.notify}, Sayonara 👋`
+                lolhuman.sendMessage(chat.jid, ini_out, MessageType.text)
+            }
+        } catch (e) {
+            console.log('Error :', e)
+        }
+    })
+
     lolhuman.on('chat-update', async(lol) => {
         try {
             const time = moment.tz('Asia/Jakarta').format('HH:mm:ss')
