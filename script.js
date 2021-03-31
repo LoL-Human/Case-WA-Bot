@@ -1474,6 +1474,32 @@ async function starts() {
                     break
 
                     // Creator
+                case 'quotemaker3':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage)) {
+                        if (args.length == 0) return reply(`Example: ${prefix + command} LoL|Human`)
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        file_name = getRandom(".webp")
+                        ini_txt = args.join(" ")
+                        request({
+                            url: `http://api.lolhuman.xyz/api/quotemaker3?apikey=${apikey}`,
+                            method: 'POST',
+                            formData: {
+                                "img": fs.createReadStream(filePath),
+                                "text": ini_txt
+                            },
+                            encoding: "binary"
+                        }, function(error, response, body) {
+                            fs.unlinkSync(filePath)
+                            fs.writeFileSync(file_name, body, "binary")
+                            ini_buff = fs.readFileSync(file_name)
+                            lolhuman.sendMessage(from, ini_buff, image, { quoted: lol })
+                            fs.unlinkSync(file_name)
+                        });
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                    }
+                    break
                 case 'stickerwm':
                     if ((isMedia && !lol.message.videoMessage || isQuotedImage)) {
                         if (args.length == 0) return reply(`Example: ${prefix + command} LoL|Human`)
@@ -1498,7 +1524,7 @@ async function starts() {
                             fs.unlinkSync(file_name)
                         });
                     } else {
-                        reply(`Tag sticker yang sudah dikirim`)
+                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
                     }
                     break
                 case 'sticker':
@@ -1548,7 +1574,7 @@ async function starts() {
                             fs.unlinkSync(file_name)
                         });
                     } else {
-                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                        reply(`Tag sticker yang sudah dikirim`)
                     }
                     break
                 case 'ttp':
@@ -1763,23 +1789,6 @@ async function starts() {
                 case 'nsfw_avatar':
                     ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/random2/${command}?apikey=${apikey}`)
                     lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
-                    break
-                case 'ngif':
-                case 'nsfw_neko_gif':
-                case 'random_hentai_gif':
-                    try {
-                        ranp = getRandom('.gif')
-                        rano = getRandom('.webp')
-                        ini_buffer = `http://api.lolhuman.xyz/api/random2/${command}?apikey=${apikey}`
-                        exec(`wget ${ini_buffer} -O ${ranp} && ffmpeg -i ${ranp} -vcodec libwebp -filter:v fps=fps=15 -lossless 1 -loop 0 -preset default -an -vsync 0 -s 512:512 ${rano}`, (err) => {
-                            fs.unlinkSync(ranp)
-                            buff = fs.readFileSync(rano)
-                            lolhuman.sendMessage(from, buff, sticker, { quoted: lol })
-                            fs.unlinkSync(rano)
-                        })
-                    } catch {
-                        throw "Error occured"
-                    }
                     break
 
                     // Textprome //
