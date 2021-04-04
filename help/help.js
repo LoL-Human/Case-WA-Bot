@@ -326,12 +326,12 @@ const help = (prefix) => {
 ├ • ${prefix}nsfw_neko_gif
 ├ • ${prefix}random_hentai_gif
 │
-╰───「 LoL Human 」`
+╰───「 SherlockHolmes 」`
 }
 exports.help = help
 
 const donate = (sender) => {
-    return `Isi punya situ ae ngabs`
+    return `https://wa.me/6282292119677`
 }
 exports.donate = donate
 
