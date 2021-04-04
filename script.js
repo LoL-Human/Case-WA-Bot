@@ -20,6 +20,10 @@ const { getRandom } = require('./lib/function')
 const { help, donate } = require('./help/help')
 const { exit } = require('process')
 
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function starts() {
     const lolhuman = new WAConnection()
     lolhuman.logger.level = 'warn'
@@ -178,6 +182,14 @@ async function starts() {
                 case 'donate':
                     reply(donate(pushname2))
                     break
+                case 'clearall':
+                    if (sender.split("@")[0] != owner) return reply("Command only for owner bot")
+                    list_chat = await lolhuman.chats.all()
+                    for (let chat of list_chat) {
+                        lolhuman.modifyChat(chat.jid, "delete")
+                    }
+                    reply("success clear all chat")
+                    break
                 case 'hidetag':
                     if (sender.split("@")[0] != owner) return reply("Command only for owner bot")
                     var value = args.join(" ")
@@ -193,6 +205,29 @@ async function starts() {
                         quoted: lol
                     }
                     lolhuman.sendMessage(from, options, text)
+                    break
+                case 'tagstick':
+                    if (sender.split("@")[0] != owner) return reply("Command only for owner bot")
+                    if ((isMedia && !lol.message.videoMessage || isQuotedSticker) && args.length == 0) {
+                        const encmedia = isQuotedSticker ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom())
+                        var value = args.join(" ")
+                        var group = await lolhuman.groupMetadata(from)
+                        var member = group['participants']
+                        var mem = []
+                        member.map(async adm => {
+                            mem.push(adm.id.replace('c.us', 's.whatsapp.net'))
+                        })
+                        var options = {
+                            contextInfo: { mentionedJid: mem },
+                            quoted: lol
+                        }
+                        ini_buffer = fs.readFileSync(filePath)
+                        lolhuman.sendMessage(from, ini_buffer, sticker, options)
+                        fs.unlinkSync(filePath)
+                    } else {
+                        reply(`Tag sticker yang sudah dikirim`)
+                    }
                     break
                 case 'broadcast':
                     if (sender.split("@")[0] != owner) return reply("Command only for owner bot")
@@ -928,6 +963,12 @@ async function starts() {
                     ini_icon = await getBuffer(get_result.icon)
                     lolhuman.sendMessage(from, ini_icon, image, { quoted: lol, caption: ini_txt })
                     break
+                case 'mlstalk':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} 84830127/2169`)
+                    ml_id = args[0]
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/mobilelegend/${ml_id}?apikey=${apikey}`)
+                    reply(get_result.result)
+                    break
                 case 'genshin':
                     if (args.length == 0) return reply(`Example: ${prefix + command} jean`)
                     hero = args.join(" ")
@@ -940,6 +981,27 @@ async function starts() {
                     lolhuman.sendMessage(from, ini_icon, image, { quoted: lol, caption: ini_txt })
                     ini_voice = await getBuffer(get_result.cv[0].audio[0])
                     lolhuman.sendMessage(from, ini_voice, audio, { quoted: lol, mimetype: Mimetype.mp4Audio })
+                    break
+                case 'qrreader':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        const filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        const form = new FormData();
+                        const stats = fs.statSync(filePath);
+                        const fileSizeInBytes = stats.size;
+                        const fileStream = fs.createReadStream(filePath);
+                        form.append('img', fileStream, { knownLength: fileSizeInBytes });
+                        const options = {
+                            method: 'POST',
+                            credentials: 'include',
+                            body: form
+                        }
+                        get_result = await fetchJson(`http://api.lolhuman.xyz/api/read-qr?apikey=${apikey}`, {...options })
+                        fs.unlinkSync(filePath)
+                        reply("Result: " + get_result.result)
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                    }
                     break
                 case 'wikipedia':
                     if (args.length == 0) return reply(`Example: ${prefix + command} Tahu`)
@@ -1534,6 +1596,29 @@ async function starts() {
                         file_name = getRandom('.webp')
                         request({
                             url: `http://api.lolhuman.xyz/api/convert/towebp?apikey=${apikey}`,
+                            method: 'POST',
+                            formData: {
+                                "img": fs.createReadStream(filePath)
+                            },
+                            encoding: "binary"
+                        }, function(error, response, body) {
+                            fs.unlinkSync(filePath)
+                            fs.writeFileSync(file_name, body, "binary")
+                            ini_buff = fs.readFileSync(file_name)
+                            lolhuman.sendMessage(from, ini_buff, sticker, { quoted: lol })
+                            fs.unlinkSync(file_name)
+                        });
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
+                    }
+                    break
+                case 'roundsticker':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia)
+                        file_name = getRandom('.webp')
+                        request({
+                            url: `http://api.lolhuman.xyz/api/convert/towebpwround?apikey=${apikey}`,
                             method: 'POST',
                             formData: {
                                 "img": fs.createReadStream(filePath)

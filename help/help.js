@@ -7,6 +7,8 @@ const help = (prefix) => {
 ├ • ${prefix}stickerwm
 ├ • ${prefix}broadcast
 ├ • ${prefix}hidetag
+├ • ${prefix}tagstick
+├ • ${prefix}clearall
 │
 ├──「 Islami 」
 ├ • ${prefix}listsurah
@@ -90,7 +92,9 @@ const help = (prefix) => {
 ├ • ${prefix}jadwaltv channel
 ├ • ${prefix}jadwaltvnow
 ├ • ${prefix}jadwalbola
+├ • ${prefix}qrreader
 ├ • ${prefix}heroml hero_name
+├ • ${prefix}mlstalk id/server
 ├ • ${prefix}genshin character
 ├ • ${prefix}wikipedia query
 ├ • ${prefix}translate kode_negara text
@@ -111,6 +115,8 @@ const help = (prefix) => {
 ├──「 Entertainment 」
 ├ • ${prefix}asupan
 ├ • ${prefix}wancak
+├ • ${prefix}tebakgambar
+├ • ${prefix}canceltebakgambar
 │
 ├──「 Creator 」
 ├ • ${prefix}ttp text
