@@ -1685,6 +1685,12 @@ async function starts() {
                         fs.writeFileSync("./database/akinator.json", JSON.stringify(akinator))
                     })
                     break
+                case 'cancelakinator':
+                    if (!akinator.hasOwnProperty(sender.split('@')[0])) return reply("Anda tidak memiliki akinator sebelumnya")
+                    delete akinator[sender.split('@')[0]]
+                    fs.writeFileSync("./database/akinator.json", JSON.stringify(akinator))
+                    reply("Success mengcancel akinator sebelumnya")
+                    break
 
 
                     // Creator
