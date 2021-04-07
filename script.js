@@ -20,6 +20,11 @@ const { getRandom } = require('./lib/function')
 const { help, donate } = require('./help/help')
 const { exit } = require('process')
 
+// Database
+const tebakgambar = JSON.parse(fs.readFileSync('./database/tebakgambar.json'))
+const akinator = JSON.parse(fs.readFileSync('./database/akinator.json'))
+const afk = JSON.parse(fs.readFileSync('./database/afk.json'))
+
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -100,6 +105,10 @@ async function starts() {
             const isCmd = body.startsWith(prefix)
             lolhuman.chatRead(from)
 
+            const mentionUser = type == "extendedTextMessage" ? lol.message.extendedTextMessage.contextInfo.mentionedJid || [] : []
+            mentionByReply = type == "extendedTextMessage" ? lol.message.extendedTextMessage.contextInfo.participant || "" : ""
+            mentionUser.push(mentionByReply)
+
             const botNumber = lolhuman.user.jid
             const isGroup = from.endsWith('@g.us')
             const sender = isGroup ? lol.participant : lol.key.remoteJid
@@ -158,6 +167,91 @@ async function starts() {
             if (isGroup && !isCmd) console.log(color(time, "white"), color("[  GROUP  ]", "aqua"), color(budy, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
             if (!isGroup && isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), color(budy, "white"), "from", color(sender.split('@')[0], "yellow"))
             if (isGroup && isCmd) console.log(color(time, "white"), color("[ COMMAND ]", "aqua"), color(budy, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
+
+            var kuis = false
+
+            // AFK
+            for (let x of mentionUser) {
+                if (afk.hasOwnProperty(x.split('@')[0])) {
+                    ini_txt = "Maaf user yang anda reply atau tag sedang afk. "
+                    if (afk[x.split('@')[0]] != "") {
+                        ini_txt += "Dengan alasan " + afk[x.split('@')[0]]
+                    }
+                    reply(ini_txt)
+                }
+            }
+            if (afk.hasOwnProperty(sender.split('@')[0])) {
+                reply("Anda telah keluar dari mode afk.")
+                delete afk[sender.split('@')[0]]
+                fs.writeFileSync("./database/afk.json", JSON.stringify(afk))
+            }
+
+            // Tebak Gambar
+            if (tebakgambar.hasOwnProperty(sender.split('@')[0]) && !isCmd) {
+                kuis = true
+                jawaban = tebakgambar[sender.split('@')[0]]
+                if (budy.toLowerCase() == jawaban) {
+                    reply("Jawaban Anda Benar!")
+                    delete tebakgambar[sender.split('@')[0]]
+                    fs.writeFileSync("./database/tebakgambar.json", JSON.stringify(tebakgambar))
+                } else {
+                    reply("Jawaban Anda Salah!")
+                }
+            }
+
+            // Akinator
+            // Premium / VIP apikey only
+            if (akinator.hasOwnProperty(sender.split('@')[0]) && !isCmd) {
+                kuis = true
+                var answer_array = ["0", "1", "2", "3", "4", "5"]
+                if (!answer_array.includes(budy)) return reply("Beri jawaban antara 0, 1, 2, 3, 4, 5")
+                var { server, frontaddr, session, signature, question, step } = akinator[sender.split('@')[0]]
+                if (step == "0" && budy == "5") return reply("Maaf Anda telah mencapai pertanyaan pertama")
+                var ini_url = `http://api.lolhuman.xyz/api/akinator/answer?apikey=${apikey}&server=${server}&frontaddr=${frontaddr}&session=${session}&signature=${signature}&answer=${budy}&step=${step}`
+                var get_result = await fetchJson(ini_url)
+                var get_result = get_result.result
+                if (get_result.hasOwnProperty("name")) {
+                    var ini_name = get_result.name
+                    var description = get_result.description
+                    var ini_image = get_result.image
+                    var ini_image = await getBuffer(ini_image)
+                    ini_txt = `${ini_name} - ${description}\n\n`
+                    ini_txt += "Sekian dan terima kasih"
+                    lolhuman.sendMessage(from, ini_image, image, { quoted: lol, caption: ini_txt }).then(() => {
+                        delete akinator[sender.split('@')[0]]
+                        fs.writeFileSync("./database/akinator.json", JSON.stringify(akinator))
+                    })
+                    return
+                }
+                var { question, _, step } = get_result
+                ini_txt = `${question}\n\n`
+                ini_txt += "0 - Ya\n"
+                ini_txt += "1 - Tidak\n"
+                ini_txt += "2 - Saya Tidak Tau\n"
+                ini_txt += "3 - Mungkin\n"
+                ini_txt += "4 - Mungkin Tidak\n"
+                ini_txt += "5 - Kembali ke Pertanyaan Sebelumnya"
+                if (budy == "5") {
+                    var ini_url = `http://api.lolhuman.xyz/api/akinator/back?apikey=${apikey}&server=${server}&frontaddr=${frontaddr}&session=${session}&signature=${signature}&answer=${budy}&step=${step}`
+                    var get_result = await fetchJson(ini_url)
+                    var get_result = get_result.result
+                    var { question, _, step } = get_result
+                    ini_txt = `${question}\n\n`
+                    ini_txt += "0 - Ya\n"
+                    ini_txt += "1 - Tidak\n"
+                    ini_txt += "2 - Saya Tidak Tau\n"
+                    ini_txt += "3 - Mungkin\n"
+                    ini_txt += "4 - Mungkin Tidak"
+                    ini_txt += "5 - Kembali ke Pertanyaan Sebelumnya"
+                }
+                lolhuman.sendMessage(from, ini_txt, text, { quoted: lol }).then(() => {
+                    const data_ = akinator[sender.split('@')[0]]
+                    data_["question"] = question
+                    data_["step"] = step
+                    akinator[sender.split('@')[0]] = data_
+                    fs.writeFileSync("./database/akinator.json", JSON.stringify(akinator))
+                })
+            }
 
             switch (command) {
                 case 'help':
@@ -236,6 +330,16 @@ async function starts() {
                     for (let chat of list_chat) {
                         sendMess(chat.jid, ini_text)
                     }
+                    break
+                case 'afk':
+                    alasan = args.join(" ")
+                    afk[sender.split('@')[0]] = alasan.toLowerCase()
+                    fs.writeFileSync("./database/afk.json", JSON.stringify(afk))
+                    ini_txt = "Anda telah afk. "
+                    if (alasan != "") {
+                        ini_txt += "Dengan alasan " + alasan
+                    }
+                    reply(ini_txt)
                     break
 
                     // Islami //
@@ -1534,6 +1638,54 @@ async function starts() {
                     ini_buffer = await getBuffer(`http://api.lolhuman.xyz/api/onecak?apikey=${apikey}`)
                     lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
+                case 'tebakgambar': // case by piyo-chan
+                    if (tebakgambar.hasOwnProperty(sender.split('@')[0])) return reply("Selesein yg sebelumnya dulu atuh")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/tebak/gambar?apikey=${apikey}`)
+                    get_result = get_result.result
+                    ini_image = get_result.image
+                    jawaban = get_result.answer
+                    ini_buffer = await getBuffer(ini_image)
+                    lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol, caption: "Jawab gk? Jawab lahhh, masa enggak. 30 detik cukup kan? gk cukup pulang aja" }).then(() => {
+                        tebakgambar[sender.split('@')[0]] = jawaban.toLowerCase()
+                        fs.writeFileSync("./database/tebakgambar.json", JSON.stringify(tebakgambar))
+                        sleep(30000)
+                    })
+                    if (tebakgambar.hasOwnProperty(sender.split('@')[0])) {
+                        reply("Jawaban: " + jawaban)
+                        delete tebakgambar[sender.split('@')[0]]
+                        fs.writeFileSync("./database/tebakgambar.json", JSON.stringify(tebakgambar))
+                    }
+                    break
+                case 'canceltebakgambar':
+                    if (!tebakgambar.hasOwnProperty(sender.split('@')[0])) return reply("Anda tidak memiliki tebak gambar sebelumnya")
+                    delete tebakgambar[sender.split('@')[0]]
+                    fs.writeFileSync("./database/tebakgambar.json", JSON.stringify(tebakgambar))
+                    reply("Success mengcancel tebak gambar sebelumnya")
+                    break
+
+                case 'akinator': // Premium / VIP apikey only
+                    if (akinator.hasOwnProperty(sender.split('@')[0])) return reply("Selesein yg sebelumnya dulu atuh")
+                    get_result = await fetchJson(`http://api.lolhuman.xyz/api/akinator/start?apikey=${apikey}`)
+                    var { server, frontaddr, session, signature, question, step } = get_result.result
+                    const data = {}
+                    data["server"] = server
+                    data["frontaddr"] = frontaddr
+                    data["session"] = session
+                    data["signature"] = signature
+                    data["question"] = question
+                    data["step"] = step
+                    ini_txt = `${question}\n\n`
+                    ini_txt += "0 - Ya\n"
+                    ini_txt += "1 - Tidak\n"
+                    ini_txt += "2 - Saya Tidak Tau\n"
+                    ini_txt += "3 - Mungkin\n"
+                    ini_txt += "4 - Mungkin Tidak"
+                    lolhuman.sendMessage(from, ini_txt, text, { quoted: lol }).then(() => {
+                        akinator[sender.split('@')[0]] = data
+                        fs.writeFileSync("./database/akinator.json", JSON.stringify(akinator))
+                    })
+                    break
+
 
                     // Creator
                 case 'quotemaker3':
@@ -2012,7 +2164,7 @@ async function starts() {
                     if (isCmd) {
                         reply(`Sorry bro, command *${prefix}${command}* gk ada di list *${prefix}help*`)
                     }
-                    if (!isGroup && !isCmd) {
+                    if (!isGroup && !isCmd && !kuis) {
                         await lolhuman.updatePresence(from, Presence.composing)
                         simi = await fetchJson(`http://api.lolhuman.xyz/api/simi?apikey=${apikey}&text=${budy}`)
                         reply(simi.result)
@@ -2022,6 +2174,7 @@ async function starts() {
             e = String(e)
             if (!e.includes("this.isZero")) {
                 const time_error = moment.tz('Asia/Jakarta').format('HH:mm:ss')
+                reply(e)
                 console.log(color(time_error, "white"), color("[  ERROR  ]", "aqua"), color(e, 'red'))
             }
         }
