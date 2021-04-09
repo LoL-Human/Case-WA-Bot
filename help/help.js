@@ -117,6 +117,8 @@ const help = (prefix) => {
 ├ • ${prefix}wancak
 ├ • ${prefix}tebakgambar
 ├ • ${prefix}canceltebakgambar
+├ • ${prefix}akinator
+├ • ${prefix}cancelakinator
 │
 ├──「 Creator 」
 ├ • ${prefix}ttp text
