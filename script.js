@@ -203,10 +203,8 @@ async function starts() {
 
             // Akinator
             // Premium / VIP apikey only
-            if (akinator.hasOwnProperty(sender.split('@')[0]) && !isCmd) {
+            if (akinator.hasOwnProperty(sender.split('@')[0]) && !isCmd && ["0", "1", "2", "3", "4", "5"].includes(body)) {
                 kuis = true
-                var answer_array = ["0", "1", "2", "3", "4", "5"]
-                if (!answer_array.includes(budy)) return reply("Beri jawaban antara 0, 1, 2, 3, 4, 5")
                 var { server, frontaddr, session, signature, question, step } = akinator[sender.split('@')[0]]
                 if (step == "0" && budy == "5") return reply("Maaf Anda telah mencapai pertanyaan pertama")
                 var ini_url = `https://api.lolhuman.xyz/api/akinator/answer?apikey=${apikey}&server=${server}&frontaddr=${frontaddr}&session=${session}&signature=${signature}&answer=${budy}&step=${step}`
@@ -1972,8 +1970,10 @@ async function starts() {
                 case 'shinobu':
                 case 'megumin':
                 case 'wallnime':
-                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    getBuffer(`https://api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`).then((gambar) => {
+                        console.log(gambar)
+                        lolhuman.sendMessage(from, gambar, image, { quoted: lol })
+                    })
                     break
                 case 'chiisaihentai':
                 case 'trap':
@@ -1994,8 +1994,9 @@ async function starts() {
                 case 'biganimetiddies':
                 case 'animebellybutton':
                 case 'hentai4everyone':
-                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/random/nsfw/${command}?apikey=${apikey}`)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    await getBuffer(`https://api.lolhuman.xyz/api/random/nsfw/${command}?apikey=${apikey}`).then((gambar) => {
+                        lolhuman.sendMessage(from, gambar, image, { quoted: lol })
+                    })
                     break
                 case 'bj':
                 case 'ero':
@@ -2039,8 +2040,9 @@ async function starts() {
                 case 'pussy_jpg':
                 case 'kemonomimi':
                 case 'nsfw_avatar':
-                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/random2/${command}?apikey=${apikey}`)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    getBuffer(`https://api.lolhuman.xyz/api/random2/${command}?apikey=${apikey}`).then((gambar) => {
+                        lolhuman.sendMessage(from, gambar, image, { quoted: lol })
+                    })
                     break
 
                     // Textprome //
@@ -2078,8 +2080,9 @@ async function starts() {
                 case 'thunder':
                     if (args.length == 0) return reply(`Example: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
-                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/textprome/${command}?apikey=${apikey}&text=${ini_txt}`)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    getBuffer(`https://api.lolhuman.xyz/api/textprome/${command}?apikey=${apikey}&text=${ini_txt}`).then((gambar) => {
+                        lolhuman.sendMessage(from, gambar, image, { quoted: lol })
+                    })
                     break
                 case 'pornhub':
                 case 'glitch':
@@ -2094,8 +2097,9 @@ async function starts() {
                     if (args.length == 0) return reply(`Example: ${prefix + command} LoL Human`)
                     txt1 = args[0]
                     txt2 = args[1]
-                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/textprome2/${command}?apikey=${apikey}&text1=${txt1}&text2=${txt2}`)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    getBuffer(`https://api.lolhuman.xyz/api/textprome2/${command}?apikey=${apikey}&text1=${txt1}&text2=${txt2}`).then((gambar) => {
+                        lolhuman.sendMessage(from, gambar, image, { quoted: lol })
+                    })
                     break
 
                     // Photo Oxy //
@@ -2125,8 +2129,9 @@ async function starts() {
                 case 'carvedwood':
                     if (args.length == 0) return reply(`Example: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
-                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/photooxy1/${command}?apikey=${apikey}&text=${ini_txt}`)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    getBuffer(`https://api.lolhuman.xyz/api/photooxy1/${command}?apikey=${apikey}&text=${ini_txt}`).then((gambar) => {
+                        lolhuman.sendMessage(from, gambar, image, { quoted: lol })
+                    })
                     break
                 case 'tiktok':
                 case 'arcade8bit':
@@ -2135,8 +2140,9 @@ async function starts() {
                     if (args.length == 0) return reply(`Example: ${prefix + command} LoL Human`)
                     txt1 = args[0]
                     txt2 = args[1]
-                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/photooxy2/${command}?apikey=${apikey}&text1=${txt1}&text2=${txt2}`)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    getBuffer(`https://api.lolhuman.xyz/api/photooxy2/${command}?apikey=${apikey}&text1=${txt1}&text2=${txt2}`).then((gambar) => {
+                        lolhuman.sendMessage(from, gambar, image, { quoted: lol })
+                    })
                     break
 
                     // Ephoto 360 //
@@ -2172,8 +2178,9 @@ async function starts() {
                 case 'freefire':
                     if (args.length == 0) return reply(`Example: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
-                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/ephoto1/${command}?apikey=${apikey}&text=${ini_txt}`)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    getBuffer(`https://api.lolhuman.xyz/api/ephoto1/${command}?apikey=${apikey}&text=${ini_txt}`).then((gambar) => {
+                        lolhuman.sendMessage(from, gambar, image, { quoted: lol })
+                    })
                     break
                 default:
                     if (isCmd) {
