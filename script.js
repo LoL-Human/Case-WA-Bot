@@ -1648,8 +1648,8 @@ async function starts() {
                     await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol, caption: "Jawab gk? Jawab lahhh, masa enggak. 30 detik cukup kan? gk cukup pulang aja" }).then(() => {
                         tebakgambar[sender.split('@')[0]] = jawaban.toLowerCase()
                         fs.writeFileSync("./database/tebakgambar.json", JSON.stringify(tebakgambar))
-                        sleep(30000)
                     })
+                    await sleep(30000)
                     if (tebakgambar.hasOwnProperty(sender.split('@')[0])) {
                         reply("Jawaban: " + jawaban)
                         delete tebakgambar[sender.split('@')[0]]
@@ -1864,6 +1864,18 @@ async function starts() {
                     ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/smoji/${emoji}?apikey=${apikey}`)
                     await lolhuman.sendMessage(from, ini_buffer, sticker, { quoted: lol })
                     break
+                case 'smoji2':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} 😭`)
+                    emoji = args[0]
+                    try {
+                        emoji = encodeURI(emoji[0])
+                    } catch {
+                        emoji = encodeURI(emoji)
+                    }
+                    ini_buffer = await fetchJson(`https://api.lolhuman.xyz/api/smoji3/${emoji}?apikey=${apikey}`)
+                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/convert/towebp?apikey=${apikey}&img=` + ini_buffer.result.emoji.whatsapp)
+                    await lolhuman.sendMessage(from, ini_buffer, sticker, { quoted: lol })
+                    break
                 case 'fakedonald':
                     if (args.length == 0) return reply(`Example: ${prefix + command} LoL Human`)
                     ini_txt = args.join(" ")
@@ -1956,6 +1968,56 @@ async function starts() {
                     reply("Success")
                     break
 
+                case '1977':
+                case 'aden':
+                case 'brannan':
+                case 'brooklyn':
+                case 'clarendon':
+                case 'gingham':
+                case 'hudson':
+                case 'inkwell':
+                case 'earlybird':
+                case 'kelvin':
+                case 'lark':
+                case 'lofi':
+                case 'maven':
+                case 'mayfair':
+                case 'moon':
+                case 'nashville':
+                case 'perpetua':
+                case 'reyes':
+                case 'rise':
+                case 'slumber':
+                case 'stinson':
+                case 'toaster':
+                case 'valencia':
+                case 'walden':
+                case 'willow':
+                case 'xpro2':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia)
+                        file_name = getRandom('.jpg')
+                        request({
+                            url: `https://api.lolhuman.xyz/api/filter/${command}?apikey=${apikey}`,
+                            method: 'POST',
+                            formData: {
+                                "img": fs.createReadStream(filePath)
+                            },
+                            encoding: "binary"
+                        }, function(error, response, body) {
+                            fs.unlinkSync(filePath)
+                            fs.writeFileSync(file_name, body, "binary")
+                            ini_buff = fs.readFileSync(file_name)
+                            lolhuman.sendMessage(from, ini_buff, image, { quoted: lol }).then(() => {
+                                fs.unlinkSync(file_name)
+                            })
+                        });
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
+                    }
+                    break
+
                     // Random Image //
                 case 'art':
                 case 'bts':
@@ -1971,7 +2033,6 @@ async function starts() {
                 case 'megumin':
                 case 'wallnime':
                     getBuffer(`https://api.lolhuman.xyz/api/random/${command}?apikey=${apikey}`).then((gambar) => {
-                        console.log(gambar)
                         lolhuman.sendMessage(from, gambar, image, { quoted: lol })
                     })
                     break
