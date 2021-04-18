@@ -10,6 +10,7 @@ const fs = require("fs")
 const FormData = require('form-data')
 const request = require('request')
 const moment = require('moment-timezone')
+const ffmpeg = require('fluent-ffmpeg')
 
 const { apikey, prefix, owner } = JSON.parse(fs.readFileSync('./config.json'))
 
@@ -601,6 +602,18 @@ async function starts() {
                     if (ini_url.includes(".mp4")) ini_type = video
                     ini_buffer = await getBuffer(ini_url)
                     await lolhuman.sendMessage(from, ini_buffer, ini_type, { quoted: lol })
+                    break
+                case 'igdl2':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} https://www.instagram.com/p/CJ8XKFmJ4al/?igshid=1acpcqo44kgkn`)
+                    ini_url = args[0]
+                    ini_url = await fetchJson(`https://api.lolhuman.xyz/api/instagram2?apikey=${apikey}&url=${ini_url}`)
+                    ini_result = ini_url.result.media
+                    for (var x of ini_result) {
+                        ini_type = image
+                        if (x.includes(".mp4")) ini_type = video
+                        ini_buffer = await getBuffer(x)
+                        await lolhuman.sendMessage(from, ini_buffer, ini_type, { quoted: lol })
+                    }
                     break
                 case 'twtdl':
                     if (args.length == 0) return reply(`Example: ${prefix + command} https://twitter.com/gofoodindonesia/status/1229369819511709697`)
@@ -1797,6 +1810,40 @@ async function starts() {
                         reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
                     }
                     break
+                case 'stickernobg':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia)
+                        file_name = getRandom('.png')
+                        file_name2 = getRandom('.webp')
+                        request({
+                            url: `https://api.lolhuman.xyz/api/removebg?apikey=${apikey}`,
+                            method: 'POST',
+                            formData: {
+                                "img": fs.createReadStream(filePath)
+                            },
+                            encoding: "binary"
+                        }, function(error, response, body) {
+                            fs.unlinkSync(filePath)
+                            fs.writeFileSync(file_name, body, "binary")
+                            ffmpeg(`./${file_name}`)
+                                .input(file_name)
+                                .on('error', function(err) {
+                                    console.log(err)
+                                    fs.unlinkSync(file_name)
+                                })
+                                .on('end', function() {
+                                    lolhuman.sendMessage(from, fs.readFileSync(file_name2), sticker, { quoted: lol })
+                                    fs.unlinkSync(file_name2)
+                                })
+                                .addOutputOptions([`-vcodec`, `libwebp`, `-vf`, `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+                                .toFormat('webp')
+                                .save(file_name2)
+                        });
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
+                    }
+                    break
                 case 'takestick':
                     if ((isMedia && !lol.message.videoMessage || isQuotedSticker)) {
                         if (args.length == 0) return reply(`Example: ${prefix + command} LoL|Human`)
@@ -1910,28 +1957,49 @@ async function starts() {
 
                     // Converter
                 case 'togif':
-                    if ((isMedia && !lol.message.videoMessage || isQuotedSticker)) {
+                    if ((isQuotedSticker)) {
                         const encmedia = isQuotedSticker ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
                         filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
-                        file_name = getRandom(".gif")
-                        ini_txt = args.join(" ").split("|")
+                        file_name = getRandom(".mp4")
                         request({
-                            url: `https://api.lolhuman.xyz/api/convert/togif?apikey=${apikey}`,
+                            url: `https://api.lolhuman.xyz/api/convert/webptomp4?apikey=${apikey}`,
                             method: 'POST',
                             formData: {
                                 "img": fs.createReadStream(filePath),
-                            },
-                            encoding: "binary"
+                            }
                         }, function(error, response, body) {
                             fs.unlinkSync(filePath)
-                            fs.writeFileSync(file_name, body, "binary")
-                            ini_buff = fs.readFileSync(file_name)
-                            lolhuman.sendMessage(from, ini_buff, video, { quoted: lol, mimetype: "video/gif", filename: file_name }).then(() => {
+                            get_result = JSON.parse(body)
+                            getBuffer(get_result.result).then(result => {
+                                lolhuman.sendMessage(from, result, video, { mimetype: Mimetype.gif })
                                 fs.unlinkSync(file_name)
                             })
                         });
                     } else {
-                        reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
+                        reply(`Reply stickernya kawan`)
+                    }
+                    break
+                case 'tomp4':
+                    if ((isQuotedSticker)) {
+                        const encmedia = isQuotedSticker ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        file_name = getRandom(".mp4")
+                        request({
+                            url: `https://api.lolhuman.xyz/api/convert/webptomp4?apikey=${apikey}`,
+                            method: 'POST',
+                            formData: {
+                                "img": fs.createReadStream(filePath),
+                            }
+                        }, function(error, response, body) {
+                            fs.unlinkSync(filePath)
+                            get_result = JSON.parse(body)
+                            getBuffer(get_result.result).then(result => {
+                                lolhuman.sendMessage(from, result, video, { mimetype: Mimetype.mp4 })
+                                fs.unlinkSync(file_name)
+                            })
+                        });
+                    } else {
+                        reply(`Reply stickernya kawan`)
                     }
                     break
 
@@ -2017,7 +2085,30 @@ async function starts() {
                         reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
                     }
                     break
-
+                case 'pencil':
+                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia)
+                        file_name = getRandom('.jpg')
+                        request({
+                            url: `https://api.lolhuman.xyz/api/editor/pencil?apikey=${apikey}`,
+                            method: 'POST',
+                            formData: {
+                                "img": fs.createReadStream(filePath)
+                            },
+                            encoding: "binary"
+                        }, async function(error, response, body) {
+                            fs.unlinkSync(filePath)
+                            fs.writeFileSync(file_name, body, "binary")
+                            ini_buff = fs.readFileSync(file_name)
+                            await lolhuman.sendMessage(from, ini_buff, image, { quoted: lol }).then(() => {
+                                fs.unlinkSync(file_name)
+                            })
+                        });
+                    } else {
+                        reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
+                    }
+                    break
                     // Random Image //
                 case 'art':
                 case 'bts':
