@@ -23,6 +23,7 @@ const { exit } = require('process')
 
 // Database
 const tebakgambar = JSON.parse(fs.readFileSync('./database/tebakgambar.json'))
+const sambungkata = JSON.parse(fs.readFileSync('./database/sambungkata.json'))
 const akinator = JSON.parse(fs.readFileSync('./database/akinator.json'))
 const afk = JSON.parse(fs.readFileSync('./database/afk.json'))
 
@@ -190,7 +191,7 @@ async function starts() {
             }
 
             // Tebak Gambar
-            if (tebakgambar.hasOwnProperty(sender.split('@')[0]) && !isCmd) {
+            if (tebakgambar.hasOwnProperty(sender.split('@')[0]) && !isCmd && budy.match(/[1-9]{1}/)) {
                 kuis = true
                 jawaban = tebakgambar[sender.split('@')[0]]
                 if (budy.toLowerCase() == jawaban) {
@@ -199,6 +200,22 @@ async function starts() {
                     fs.writeFileSync("./database/tebakgambar.json", JSON.stringify(tebakgambar))
                 } else {
                     reply("Jawaban Anda Salah!")
+                }
+            }
+
+            // Sambung Kata
+            if (sambungkata.hasOwnProperty(sender.split('@')[0]) && !isCmd) {
+                kuis = true
+                jawaban = sambungkata[sender.split('@')[0]]
+                userAnswer = budy.toLowerCase()
+                if (userAnswer.startsWith(jawaban[jawaban.length - 1])) {
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/sambungkata?apikey=${apikey}&text=${userAnswer}`)
+                    await lolhuman.sendMessage(from, get_result.result, text, { quoted: lol }).then(() => {
+                        sambungkata[sender.split('@')[0]] = get_result.result.toLowerCase()
+                        fs.writeFileSync("./database/sambungkata.json", JSON.stringify(sambungkata))
+                    })
+                } else {
+                    reply("Silahkan jawab dengan kata yang dimulai huruf " + jawaban[jawaban.length - 1])
                 }
             }
 
@@ -1651,6 +1668,23 @@ async function starts() {
                     ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/onecak?apikey=${apikey}`)
                     await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
+                case 'sambungkata':
+                    if (sambungkata.hasOwnProperty(sender.split('@')[0])) return reply("Selesein yg sebelumnya dulu atuh")
+                    if (args.length == 0) return reply(`Example: ${prefix + command} tahu`)
+                    ini_txt = args.join(" ")
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/sambungkata?apikey=${apikey}&text=${ini_txt}`)
+                    get_result = get_result.result
+                    await lolhuman.sendMessage(from, get_result, text, { quoted: lol }).then(() => {
+                        sambungkata[sender.split('@')[0]] = get_result.toLowerCase()
+                        fs.writeFileSync("./database/sambungkata.json", JSON.stringify(sambungkata))
+                    })
+                    break
+                case 'cancelsambungkata':
+                    if (!sambungkata.hasOwnProperty(sender.split('@')[0])) return reply("Anda tidak memiliki tebak gambar sebelumnya")
+                    delete sambungkata[sender.split('@')[0]]
+                    fs.writeFileSync("./database/sambungkata.json", JSON.stringify(sambungkata))
+                    reply("Success mengcancel sambung kata sebelumnya")
+                    break
                 case 'tebakgambar': // case by piyo-chan
                     if (tebakgambar.hasOwnProperty(sender.split('@')[0])) return reply("Selesein yg sebelumnya dulu atuh")
                     get_result = await fetchJson(`https://api.lolhuman.xyz/api/tebak/gambar?apikey=${apikey}`)
@@ -2003,23 +2037,70 @@ async function starts() {
                     }
                     break
 
+                    // Stalk
+                case 'stalkig':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} jessnolimit`)
+                    username = args[0]
+                    ini_result = await fetchJson(`https://api.lolhuman.xyz/api/stalkig/${username}?apikey=${apikey}`)
+                    ini_result = ini_result.result
+                    ini_buffer = await getBuffer(ini_result.photo_profile)
+                    ini_txt = `Username : ${ini_result.username}\n`
+                    ini_txt += `Full Name : ${ini_result.fullname}\n`
+                    ini_txt += `Posts : ${ini_result.posts}\n`
+                    ini_txt += `Followers : ${ini_result.followers}\n`
+                    ini_txt += `Following : ${ini_result.following}\n`
+                    ini_txt += `Bio : ${ini_result.bio}`
+                    lolhuman.sendMessage(from, ini_buffer, image, { caption: ini_txt })
+                    break
+                case 'stalkgithub':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} LoL-Human`)
+                    username = args[0]
+                    ini_result = await fetchJson(`https://api.lolhuman.xyz/api/github/${username}?apikey=${apikey}`)
+                    ini_result = ini_result.result
+                    ini_buffer = await getBuffer(ini_result.avatar)
+                    ini_txt = `Name : ${ini_result.name}\n`
+                    ini_txt += `Link : ${ini_result.url}\n`
+                    ini_txt += `Public Repo : ${ini_result.public_repos}\n`
+                    ini_txt += `Public Gists : ${ini_result.public_gists}\n`
+                    ini_txt += `Followers : ${ini_result.followers}\n`
+                    ini_txt += `Following : ${ini_result.following}\n`
+                    ini_txt += `Bio : ${ini_result.bio}`
+                    lolhuman.sendMessage(from, ini_buffer, image, { caption: ini_txt })
+                    break
+                case 'stalktwitter':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} jokowi`)
+                    username = args[0]
+                    ini_result = await fetchJson(`https://api.lolhuman.xyz/api/twitter/${username}?apikey=${apikey}`)
+                    ini_result = ini_result.result
+                    ini_buffer = await getBuffer(ini_result.profile_picture)
+                    ini_txt = `Username : ${ini_result.screen_name}\n`
+                    ini_txt += `Name : ${ini_result.name}\n`
+                    ini_txt += `Tweet : ${ini_result.tweet}\n`
+                    ini_txt += `Joined : ${ini_result.joined}\n`
+                    ini_txt += `Followers : ${ini_result.followers}\n`
+                    ini_txt += `Following : ${ini_result.following}\n`
+                    ini_txt += `Like : ${ini_result.like}\n`
+                    ini_txt += `Description : ${ini_result.description}`
+                    lolhuman.sendMessage(from, ini_buffer, image, { caption: ini_txt })
+                    break
+
                     // Other
                 case 'ssweb':
                     if (args.length == 0) return reply(`Example: ${prefix + command} https://api.lolhuman.xyz`)
                     ini_link = args[0]
-                    ini_buffer = await getBuffer(`http://lolhuman.herokuapp.com/api/ssweb?apikey=${apikey}&url=${ini_link}`)
+                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/ssweb?apikey=${apikey}&url=${ini_link}`)
                     await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
                 case 'ssweb2':
                     if (args.length == 0) return reply(`Example: ${prefix + command} https://api.lolhuman.xyz`)
                     ini_link = args[0]
-                    ini_buffer = await getBuffer(`http://lolhuman.herokuapp.com/api/sswebfull?apikey=${apikey}&url=${ini_link}`)
+                    ini_buffer = await getBuffer(`https://api.lolhuman.xyz/api/sswebfull?apikey=${apikey}&url=${ini_link}`)
                     await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
                     break
                 case 'shortlink':
                     if (args.length == 0) return reply(`Example: ${prefix + command} https://api.lolhuman.xyz`)
                     ini_link = args[0]
-                    ini_buffer = await fetchJson(`http://lolhuman.herokuapp.com/api/shortlink?apikey=${apikey}&url=${ini_link}`)
+                    ini_buffer = await fetchJson(`https://api.lolhuman.xyz/api/shortlink?apikey=${apikey}&url=${ini_link}`)
                     reply(ini_buffer.result)
                     break
                 case 'spamsms':
