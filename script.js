@@ -63,17 +63,24 @@ async function starts() {
             } catch (e) {
                 var pp_user = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60'
             }
+            try {
+                var pp_group = await lolhuman.getProfilePicture(chat.jid)
+            } catch (e) {
+                var pp_group = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60'
+            }
             if (chat.action == 'add') {
                 ini_user = lolhuman.contacts[mem]
-                ini_img = await getBuffer(`https://api.lolhuman.xyz/api/welcomeimage?apikey=${apikey}&img=${pp_user}&text=${ini_user.notify}`)
                 group_info = await lolhuman.groupMetadata(chat.jid)
+                ini_img = await getBuffer(`https://api.lolhuman.xyz/api/base/welcome?apikey=${apikey}&img1=${pp_user}&img2=${pp_group}&background=https://i.ibb.co/8B6Q84n/LTqHsfYS.jpg&username=${ini_user.notify}&member=${group_info.participants.length}&groupname= ${group_info.subject}`)
                 welkam = `${ini_user.notify}, Welkam to ${group_info.subject}`
                 await lolhuman.sendMessage(chat.jid, ini_img, MessageType.image, { caption: welkam })
             }
             if (chat.action == 'remove') {
                 ini_user = lolhuman.contacts[mem]
+                group_info = await lolhuman.groupMetadata(chat.jid)
+                ini_img = await getBuffer(`https://api.lolhuman.xyz/api/base/leave?apikey=${apikey}&img1=${pp_user}&img2=${pp_group}&background=https://i.ibb.co/8B6Q84n/LTqHsfYS.jpg&username=${ini_user.notify}&member=${group_info.participants.length}&groupname= ${group_info.subject}`)
                 ini_out = `${ini_user.notify}, Sayonara 👋`
-                await lolhuman.sendMessage(chat.jid, ini_out, MessageType.text)
+                await lolhuman.sendMessage(chat.jid, ini_img, MessageType.image, { caption: welkam })
             }
         } catch (e) {
             console.log('Error :', e)
@@ -667,6 +674,16 @@ async function starts() {
                     ini_url = ini_url.result
                     ini_buffer = await getBuffer(ini_url)
                     await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol })
+                    break
+                case 'pinterest2':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} loli kawaii`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/pinterest2?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    for (var x = 0; x <= 5; x++) {
+                        var ini_buffer = await getBuffer(get_result[x])
+                        await lolhuman.sendMessage(from, ini_buffer, image)
+                    }
                     break
                 case 'pinterestdl':
                     if (args.length == 0) return reply(`Example: ${prefix + command} https://id.pinterest.com/pin/696580267364426905/`)
@@ -2082,6 +2099,21 @@ async function starts() {
                     ini_txt += `Like : ${ini_result.like}\n`
                     ini_txt += `Description : ${ini_result.description}`
                     lolhuman.sendMessage(from, ini_buffer, image, { caption: ini_txt })
+                    break
+                case 'stalktiktok':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} bulansutena`)
+                    stalk_toktok = args[0]
+                    get_result = await fetchJson(`http://lolhuman.herokuapp.com/api/stalktiktok/${stalk_toktok}?apikey=${apikey}`)
+                    get_result = get_result.result
+                    ini_txt = `Username : ${get_result.username}\n`
+                    ini_txt += `Nickname : ${get_result.nickname}\n`
+                    ini_txt += `Followers : ${get_result.followers}\n`
+                    ini_txt += `Followings : ${get_result.followings}\n`
+                    ini_txt += `Likes : ${get_result.likes}\n`
+                    ini_txt += `Video : ${get_result.video}\n`
+                    ini_txt += `Bio : ${get_result.bio}\n`
+                    pp_tt = await getBuffer(get_result.user_picture)
+                    lolhuman.sendMessage(from, pp_tt, image, { quoted: lol, caption: ini_txt })
                     break
 
                     // Other
