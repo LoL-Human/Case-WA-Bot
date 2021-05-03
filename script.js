@@ -1091,6 +1091,15 @@ async function starts() {
                     break
 
                     // Information //
+                case 'chord':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} Melukis senja`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/chord?apikey=${apikey}&query=${query}`)
+                    get_result = get_result.result
+                    ini_txt = `Title : ${get_result.title}\n`
+                    ini_txt += `Chord : \n${get_result.chord}`
+                    reply(ini_txt)
+                    break
                 case 'heroml':
                     if (args.length == 0) return reply(`Example: ${prefix + command} Fanny`)
                     hero = args.join(" ")
