@@ -24,11 +24,8 @@ const help = (prefix) => {
 ├──「 Downloader 」
 ├ • ${prefix}ytsearch query
 ├ • ${prefix}ytplay query
-├ • ${prefix}ytplay2 query
 ├ • ${prefix}ytmp3 url_video
-├ • ${prefix}ytmp32 url_video
 ├ • ${prefix}ytmp4 url_video
-├ • ${prefix}ytmp42 url_video
 ├ • ${prefix}tiktoknowm url_video
 ├ • ${prefix}tiktokmusic url_video
 ├ • ${prefix}igdl url_post
@@ -89,6 +86,10 @@ const help = (prefix) => {
 ├ • ${prefix}nekopoisearch query
 │
 ├──「 Information 」
+├ • ${prefix}kbbi
+├ • ${prefix}brainly2
+├ • ${prefix}jarak
+├ • ${prefix}urbandictionary
 ├ • ${prefix}jadwaltv channel
 ├ • ${prefix}jadwaltvnow
 ├ • ${prefix}jadwalbola

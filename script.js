@@ -125,7 +125,7 @@ async function starts() {
             const sender = isGroup ? lol.participant : lol.key.remoteJid
             const groupMetadata = isGroup ? await lolhuman.groupMetadata(from) : ''
             const groupName = isGroup ? groupMetadata.subject : ''
-            const totalchat = await lolhuman.chats.all()
+            const totalchat = lolhuman.chats.all()
 
             const isUrl = (ini_url) => {
                 return ini_url.match(new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/, 'gi'))
@@ -445,36 +445,20 @@ async function starts() {
 
                     // Downloader //
                 case 'ytplay':
-                    if (args.length == 0) return reply(`Example: ${prefix + command} Melukis Senja`)
-                    query = args.join(" ")
-                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/ytplay?apikey=${apikey}&query=${query}`)
-                    get_result = get_result.result
-                    get_info = get_result.info
-                    ini_txt = `Title : ${get_info.title}\n`
-                    ini_txt += `Uploader : ${get_info.uploader}\n`
-                    ini_txt += `Duration : ${get_info.duration}\n`
-                    ini_txt += `View : ${get_info.view}\n`
-                    ini_txt += `Like : ${get_info.like}\n`
-                    ini_txt += `Dislike : ${get_info.dislike}\n`
-                    ini_txt += `Description :\n ${get_info.description}\n`
-                    ini_buffer = await getBuffer(get_info.thumbnail)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol, caption: ini_txt })
-                    get_audio = await getBuffer(get_result.audio[3].link)
-                    await lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_info.title}.mp3`, quoted: lol })
-                    get_video = await getBuffer(get_result.video[0].link)
-                    await lolhuman.sendMessage(from, get_video, video, { mimetype: 'video/mp4', filename: `${get_info.title}.mp4`, quoted: lol })
-                    break
-                case 'ytplay2':
-                    if (args.length == 0) return reply(`Example: ${prefix + command} Melukis Senja`)
-                    query = args.join(" ")
-                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/ytplay2?apikey=${apikey}&query=${query}`)
-                    get_result = get_result.result
-                    ini_buffer = await getBuffer(get_result.thumbnail)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol, caption: get_result.title })
-                    get_audio = await getBuffer(get_result.audio)
-                    await lolhuman.sendMessage(from, get_audio, audio, { mimetype: Mimetype.mp4Audio, filename: `${get_result.title}.mp3`, quoted: lol })
-                    get_video = await getBuffer(get_result.video)
-                    await lolhuman.sendMessage(from, get_video, video, { mimetype: Mimetype.mp4, filename: `${get_result.title}.mp4`, quoted: lol })
+                    if (args.length == 0) return await reply(`Example: ${prefix + command} melukis senja`)
+                    await fetchJson(`https://api.lolhuman.xyz/api/ytsearch?apikey=${apikey}&query=${args.join(" ")}`)
+                        .then(async(result) => {
+                            await fetchJson(`https://api.lolhuman.xyz/api/ytaudio2?apikey=${apikey}&url=https://www.youtube.com/watch?v=${result.result[0].videoId}`)
+                                .then(async(result) => {
+                                    result = result.result
+                                    caption = `❖ Title    : *${result.title}*\n`
+                                    caption += `❖ Size     : *${result.size}*`
+                                    ini_buffer = await getBuffer(result.thumbnail)
+                                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol, caption: caption })
+                                    get_audio = await getBuffer(result.link)
+                                    await lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${result.title}.mp3`, quoted: lol })
+                                })
+                        })
                     break
                 case 'ytsearch':
                     if (args.length == 0) return reply(`Example: ${prefix + command} Melukis Senja`)
@@ -494,49 +478,16 @@ async function starts() {
                 case 'ytmp3':
                     if (args.length == 0) return reply(`Example: ${prefix + command} https://www.youtube.com/watch?v=qZIQAk-BUEc`)
                     ini_link = args[0]
-                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/ytaudio?apikey=${apikey}&url=${ini_link}`)
-                    get_result = get_result.result
-                    ini_txt = `Title : ${get_result.title}\n`
-                    ini_txt += `Uploader : ${get_result.uploader}\n`
-                    ini_txt += `Duration : ${get_result.duration}\n`
-                    ini_txt += `View : ${get_result.view}\n`
-                    ini_txt += `Like : ${get_result.like}\n`
-                    ini_txt += `Dislike : ${get_result.dislike}\n`
-                    ini_txt += `Description :\n ${get_result.description}`
-                    ini_buffer = await getBuffer(get_result.thumbnail)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol, caption: ini_txt })
-                    get_audio = await getBuffer(get_result.link[3].link)
-                    await lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_result.title}.mp3`, quoted: lol })
-                    break
-                case 'ytmp32':
-                    if (args.length == 0) return reply(`Example: ${prefix + command} https://www.youtube.com/watch?v=qZIQAk-BUEc`)
-                    ini_link = args[0]
                     get_result = await fetchJson(`https://api.lolhuman.xyz/api/ytaudio2?apikey=${apikey}&url=${ini_link}`)
                     get_result = get_result.result
-                    ini_txt = `${get_result.title} - ${get_result.size}`
+                    caption = `❖ Title    : *${result.title}*\n`
+                    caption += `❖ Size     : *${result.size}*`
                     ini_buffer = await getBuffer(get_result.thumbnail)
                     await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol, caption: ini_txt })
                     get_audio = await getBuffer(get_result.link)
                     await lolhuman.sendMessage(from, get_audio, audio, { mimetype: 'audio/mp4', filename: `${get_result.title}.mp3`, quoted: lol })
                     break
                 case 'ytmp4':
-                    if (args.length == 0) return reply(`Example: ${prefix + command} https://www.youtube.com/watch?v=qZIQAk-BUEc`)
-                    ini_link = args[0]
-                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/ytvideo?apikey=${apikey}&url=${ini_link}`)
-                    get_result = get_result.result
-                    ini_txt = `Title : ${get_result.title}\n`
-                    ini_txt += `Uploader : ${get_result.uploader}\n`
-                    ini_txt += `Duration : ${get_result.duration}\n`
-                    ini_txt += `View : ${get_result.view}\n`
-                    ini_txt += `Like : ${get_result.like}\n`
-                    ini_txt += `Dislike : ${get_result.dislike}\n`
-                    ini_txt += `Description :\n ${get_result.description}`
-                    ini_buffer = await getBuffer(get_result.thumbnail)
-                    await lolhuman.sendMessage(from, ini_buffer, image, { quoted: lol, caption: ini_txt })
-                    get_audio = await getBuffer(get_result.link[0].link)
-                    await lolhuman.sendMessage(from, get_audio, video, { mimetype: 'video/mp4', filename: `${get_result.title}.mp4`, quoted: lol })
-                    break
-                case 'ytmp42':
                     if (args.length == 0) return reply(`Example: ${prefix + command} https://www.youtube.com/watch?v=qZIQAk-BUEc`)
                     ini_link = args[0]
                     get_result = await fetchJson(`https://api.lolhuman.xyz/api/ytvideo2?apikey=${apikey}&url=${ini_link}`)
@@ -1091,6 +1042,79 @@ async function starts() {
                     break
 
                     // Information //
+                case 'kbbi':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} kursi`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/kbbi?apikey=${apikey}&query=${args.join(" ")}`)
+                    lila = get_result.result
+                    ini_txt = `\`\`\`Kata : ${lila[0].nama}\`\`\`\n`
+                    ini_txt += `\`\`\`Kata Dasar : ${lila[0].kata_dasar}\`\`\`\n`
+                    ini_txt += `\`\`\`Pelafalan : ${lila[0].pelafalan}\`\`\`\n`
+                    ini_txt += `\`\`\`Bentuk Tidak Baku : ${lila[0].bentuk_tidak_baku}\`\`\`\n\n`
+                    for (var x of lila) {
+                        ini_txt += `\`\`\`Kode : ${x.makna[0].kelas[0].kode}\`\`\`\n`
+                        ini_txt += `\`\`\`Kelas : ${x.makna[0].kelas[0].nama}\`\`\`\n`
+                        ini_txt += `\`\`\`Artinya : \n${x.makna[0].kelas[0].deskripsi}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Makna Lain : \n${x.makna[0].submakna}\`\`\`\n `
+                        ini_txt += `\`\`\`Contoh Kalimat : \n${x.makna[0].contoh}\`\`\`\n`
+                    }
+                    reply(ini_txt)
+                    break
+                case 'brainly2':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} siapakah sukarno`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/brainly2?apikey=${apikey}&query=${args.join(" ")}`)
+                    lala = get_result.result
+                    ini_txt = "Beberapa Pembahasan Dari Brainly :\n\n"
+                    for (var x of lala) {
+                        ini_txt += `==============================\n`
+                        ini_txt += `\`\`\`Pertanyaan :\`\`\`\n${x.question.content}\n\n`
+                        ini_txt += `\`\`\`Jawaban :\`\`\`\n${x.answer[0].content}\n`
+                        ini_txt += `==============================\n\n`
+                    }
+                    reply(ini_txt)
+                    break
+                case 'jarak':
+                    if (args.length == 0) return reply(`Example: ${prefix + command} jakarta - yogyakarta`)
+                    pauls = args.join(" ")
+                    teks1 = pauls.split("-")[0].trim()
+                    teks2 = pauls.split("-")[1].trim()
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/jaraktempuh?apikey=${apikey}&kota1=${teks1}&kota2=${teks2}`)
+                    x = get_result.result
+                    ini_txt = `Informasi Jarak dari ${teks1} ke ${teks2} :\n\n`
+                    ini_txt += `\`\`\`◪ Asal :\`\`\` ${x.from.name}\n`
+                    ini_txt += `\`\`\`◪ Garis Lintang :\`\`\` ${x.from.latitude}\n`
+                    ini_txt += `\`\`\`◪ Garis Bujur :\`\`\` ${x.from.longitude}\n\n`
+                    ini_txt += `\`\`\`◪ Tujuan :\`\`\` ${x.to.name}\n`
+                    ini_txt += `\`\`\`◪ Garis Lintang :\`\`\` ${x.to.latitude}\n`
+                    ini_txt += `\`\`\`◪ Garis Bujur :\`\`\` ${x.to.longitude}\n\n`
+                    ini_txt += `\`\`\`◪ Jarak Tempuh :\`\`\` ${x.jarak}\n`
+                    ini_txt += `\`\`\`◪ Waktu Tempuh :\`\`\`\n`
+                    ini_txt += `   ╭───────────────❏\n`
+                    ini_txt += `❍┤ Kereta Api : ${x.kereta_api}\n`
+                    ini_txt += `❍┤ Pesawat : ${x.pesawat}\n`
+                    ini_txt += `❍┤ Mobil : ${x.mobil}\n`
+                    ini_txt += `❍┤ Motor : ${x.motor}\n`
+                    ini_txt += `❍┤ Jalan Kaki : ${x.jalan_kaki}\n`
+                    ini_txt += `   ╰───────────────❏\n`
+                    reply(ini_txt)
+                    break
+                case 'urbandictionary':
+                    urb = args.join(" ")
+                    get_result = await fetchJson(`http://lolhuman.herokuapp.com/api/urdict?apikey=Lucky&query=${urb}`)
+                    lilu = get_result.result
+                    for (var x of lilu) {
+                        ini_txt = `\`\`\`Meaning :\n${x.definition}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Link : ${x.permalink}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Sounds Url : ${x.sound_urls[0]}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Like : ${x.thumbs_up}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Dislike : ${x.thumbs_down}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Created On : \n${x.written_on}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Author : ${x.author}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Word : ${x.word}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Defined Id : ${x.defid}\`\`\`\n\n`
+                        ini_txt += `\`\`\`Example : ${x.example}\`\`\`\n\n`
+                    }
+                    reply(ini_txt)
+                    break
                 case 'chord':
                     if (args.length == 0) return reply(`Example: ${prefix + command} Melukis senja`)
                     query = args.join(" ")

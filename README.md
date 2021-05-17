@@ -116,3 +116,4 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * [`Riyan`](https://github.com/shitara999)
 * [`Sofyan`](https://github.com/SofyanAMV09)
 * [`Riz`](https://github.com/riznih)
+* [`Paul`]
