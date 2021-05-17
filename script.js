@@ -1099,7 +1099,7 @@ async function starts() {
                     break
                 case 'urbandictionary':
                     urb = args.join(" ")
-                    get_result = await fetchJson(`http://lolhuman.herokuapp.com/api/urdict?apikey=Lucky&query=${urb}`)
+                    get_result = await fetchJson(`http://lolhuman.herokuapp.com/api/urdict?apikey=${apikey}&query=${urb}`)
                     lilu = get_result.result
                     for (var x of lilu) {
                         ini_txt = `\`\`\`Meaning :\n${x.definition}\`\`\`\n\n`
