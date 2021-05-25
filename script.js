@@ -198,7 +198,7 @@ async function starts() {
             }
 
             // Tebak Gambar
-            if (tebakgambar.hasOwnProperty(sender.split('@')[0]) && !isCmd && budy.match(/[1-9]{1}/)) {
+            if (tebakgambar.hasOwnProperty(sender.split('@')[0]) && !isCmd) {
                 kuis = true
                 jawaban = tebakgambar[sender.split('@')[0]]
                 if (budy.toLowerCase() == jawaban) {
@@ -228,7 +228,7 @@ async function starts() {
 
             // Akinator
             // Premium / VIP apikey only
-            if (akinator.hasOwnProperty(sender.split('@')[0]) && !isCmd && ["0", "1", "2", "3", "4", "5"].includes(body)) {
+            if (akinator.hasOwnProperty(sender.split('@')[0]) && !isCmd && ["0", "1", "2", "3", "4", "5"].includes(budy)) {
                 kuis = true
                 var { server, frontaddr, session, signature, question, step } = akinator[sender.split('@')[0]]
                 if (step == "0" && budy == "5") return reply("Maaf Anda telah mencapai pertanyaan pertama")
