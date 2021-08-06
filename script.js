@@ -1850,22 +1850,24 @@ async function starts() {
                     if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
                         const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
                         filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia)
-                        file_name = getRandom('.webp')
-                        request({
-                            url: `https://api.lolhuman.xyz/api/convert/towebp?apikey=${apikey}`,
-                            method: 'POST',
-                            formData: {
-                                "img": fs.createReadStream(filePath)
-                            },
-                            encoding: "binary"
-                        }, function(error, response, body) {
-                            fs.unlinkSync(filePath)
-                            fs.writeFileSync(file_name, body, "binary")
-                            ini_buff = fs.readFileSync(file_name)
-                            lolhuman.sendMessage(from, ini_buff, sticker, { quoted: lol }).then(() => {
-                                fs.unlinkSync(file_name)
+                        var filename = './temp/' + getRandomExt()
+                        var filepath = await lolhuman.downloadAndSaveMediaMessage(media, filename)
+                        var randomName = getRandomExt('.webp')
+                        ffmpeg(`./${filepath}`)
+                            .input(filepath)
+                            .on('error', () => {
+                                fs.unlinkSync(filepath)
+                                reply('Terjadi kesalahan saat mengconvert sticker.')
                             })
-                        });
+                            .on('end', () => {
+                                buffer = fs.readFileSync(randomName)
+                                wa.sendSticker(from, buffer, lol)
+                                fs.unlinkSync(filepath)
+                                fs.unlinkSync(randomName)
+                            })
+                            .addOutputOptions([`-vcodec`, `libwebp`, `-vf`, `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+                            .toFormat('webp')
+                            .save(randomName)
                     } else {
                         reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
                     }
