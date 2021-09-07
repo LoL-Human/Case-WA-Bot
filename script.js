@@ -20,6 +20,7 @@ const { exec } = require("child_process")
 const { getRandom } = require('./lib/function')
 const { help, donate } = require('./help/help')
 const { exit } = require('process')
+const { default: axios } = require('axios')
 
 // Database
 const tebakgambar = JSON.parse(fs.readFileSync('./database/tebakgambar.json'))
@@ -169,10 +170,10 @@ async function starts() {
             }
 
             colors = ['red', 'white', 'black', 'blue', 'yellow', 'green', 'aqua']
-            const isMedia = (type === 'imageMessage' || type === 'videoMessage')
             const isQuotedImage = type === 'extendedTextMessage' && content.includes('imageMessage')
             const isQuotedVideo = type === 'extendedTextMessage' && content.includes('videoMessage')
             const isQuotedSticker = type === 'extendedTextMessage' && content.includes('stickerMessage')
+            const isMedia = isQuotedImage || isQuotedVideo
 
             if (!isGroup && !isCmd) console.log(color(time, "white"), color("[ PRIVATE ]", "aqua"), color(budy, "white"), "from", color(sender.split('@')[0], "yellow"))
             if (isGroup && !isCmd) console.log(color(time, "white"), color("[  GROUP  ]", "aqua"), color(budy, "white"), "from", color(sender.split('@')[0], "yellow"), "in", color(groupName, "yellow"))
@@ -1819,40 +1820,25 @@ async function starts() {
                     }
                     break
                 case 'stickerwm':
-                    if ((isMedia && !lol.message.videoMessage || isQuotedImage)) {
-                        if (args.length == 0) return reply(`Example: ${prefix + command} LoL|Human`)
+                    if ((isQuotedImage)) {
                         const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
-                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
-                        file_name = getRandom(".webp")
-                        ini_txt = args.join(" ").split("|")
-                        request({
-                            url: `https://api.lolhuman.xyz/api/convert/towebpauthor?apikey=${apikey}`,
-                            method: 'POST',
-                            formData: {
-                                "img": fs.createReadStream(filePath),
-                                "package": ini_txt[0],
-                                "author": ini_txt[1]
-                            },
-                            encoding: "binary"
-                        }, function(error, response, body) {
-                            fs.unlinkSync(filePath)
-                            fs.writeFileSync(file_name, body, "binary")
-                            ini_buff = fs.readFileSync(file_name)
-                            lolhuman.sendMessage(from, ini_buff, sticker, { quoted: lol }).then(() => {
-                                fs.unlinkSync(file_name)
-                            })
-                        });
+                        var image_buffer = await lolhuman.downloadMediaMessage(encmedia);
+                        var formdata = new FormData()
+                        formdata.append('package', 'LoL')
+                        formdata.append('author', 'Human')
+                        formdata.append('img', image_buffer, { filename: 'tahu.jpg' })
+                        axios.post(`https://api.lolhuman.xyz/api/convert/towebpauthor?apikey=${apikey}`, formdata.getBuffer(), { headers: { "content-type": `multipart/form-data; boundary=${formdata._boundary}` }, responseType: 'arraybuffer' }).then((res) => {
+                            lolhuman.sendMessage(from, res.data, sticker)
+                        })
                     } else {
                         reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
                     }
                     break
                 case 'sticker':
-                    if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
-                        const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
-                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia)
-                        var filename = './temp/' + getRandomExt()
-                        var filepath = await lolhuman.downloadAndSaveMediaMessage(media, filename)
-                        var randomName = getRandomExt('.webp')
+                    if ((isQuotedVideo || isQuotedImage) && args.length == 0) {
+                        const encmedia = isQuotedImage || isQuotedVideo ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
+                        var filepath = await lolhuman.downloadAndSaveMediaMessage(encmedia, getRandom())
+                        var randomName = getRandom('.webp')
                         ffmpeg(`./${filepath}`)
                             .input(filepath)
                             .on('error', () => {
@@ -1860,8 +1846,7 @@ async function starts() {
                                 reply('Terjadi kesalahan saat mengconvert sticker.')
                             })
                             .on('end', () => {
-                                buffer = fs.readFileSync(randomName)
-                                wa.sendSticker(from, buffer, lol)
+                                lolhuman.sendMessage(from, fs.readFileSync(randomName), sticker, { quoted: lol })
                                 fs.unlinkSync(filepath)
                                 fs.unlinkSync(randomName)
                             })
