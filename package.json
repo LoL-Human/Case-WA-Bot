@@ -15,7 +15,7 @@
     ],
     "license": "ISC",
     "dependencies": {
-        "@adiwajshing/baileys": "^3.5.1",
+        "@adiwajshing/baileys": "^3.5.2",
         "async": "^3.2.0",
         "axios": "^0.21.1",
         "cfonts": "^2.9.0",
@@ -32,6 +32,5 @@
         "performance-now": "^2.1.0",
         "request": "^2.88.2",
         "spinnies": "^0.5.1"
-    },
-    "devDependencies": {}
+    }
 }

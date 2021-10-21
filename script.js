@@ -1860,23 +1860,12 @@ async function starts() {
                 case 'roundsticker':
                     if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
                         const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
-                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia)
-                        file_name = getRandom('.webp')
-                        request({
-                            url: `https://api.lolhuman.xyz/api/convert/towebpwround?apikey=${apikey}`,
-                            method: 'POST',
-                            formData: {
-                                "img": fs.createReadStream(filePath)
-                            },
-                            encoding: "binary"
-                        }, function(error, response, body) {
-                            fs.unlinkSync(filePath)
-                            fs.writeFileSync(file_name, body, "binary")
-                            ini_buff = fs.readFileSync(file_name)
-                            lolhuman.sendMessage(from, ini_buff, sticker, { quoted: lol }).then(() => {
-                                fs.unlinkSync(file_name)
-                            })
-                        });
+                        var image_buffer = await lolhuman.downloadMediaMessage(encmedia);
+                        var formdata = new FormData()
+                        formdata.append('img', image_buffer, { filename: 'tahu.jpg' })
+                        axios.post(`https://api.lolhuman.xyz/api/convert/towebpwround?apikey=${apikey}`, formdata.getBuffer(), { headers: { "content-type": `multipart/form-data; boundary=${formdata._boundary}` }, responseType: 'arraybuffer' }).then((res) => {
+                            lolhuman.sendMessage(from, res.data, sticker)
+                        })
                     } else {
                         reply(`Kirim gambar dengan caption ${prefix}sticker atau tag gambar yang sudah dikirim`)
                     }
@@ -1919,26 +1908,15 @@ async function starts() {
                     if ((isMedia && !lol.message.videoMessage || isQuotedSticker)) {
                         if (args.length == 0) return reply(`Example: ${prefix + command} LoL|Human`)
                         const encmedia = isQuotedSticker ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
-                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
-                        file_name = getRandom(".webp")
-                        ini_txt = args.join(" ").split("|")
-                        request({
-                            url: `https://api.lolhuman.xyz/api/convert/towebpauthor?apikey=${apikey}`,
-                            method: 'POST',
-                            formData: {
-                                "img": fs.createReadStream(filePath),
-                                "package": ini_txt[0],
-                                "author": ini_txt[1]
-                            },
-                            encoding: "binary"
-                        }, function(error, response, body) {
-                            fs.unlinkSync(filePath)
-                            fs.writeFileSync(file_name, body, "binary")
-                            ini_buff = fs.readFileSync(file_name)
-                            lolhuman.sendMessage(from, ini_buff, sticker, { quoted: lol }).then(() => {
-                                fs.unlinkSync(file_name)
-                            })
-                        });
+                        var image_buffer = await lolhuman.downloadMediaMessage(encmedia);
+                        var ini_txt = args.join(" ").split("|")
+                        var formdata = new FormData()
+                        formdata.append('package', ini_txt[0])
+                        formdata.append('author', ini_txt[1])
+                        formdata.append('img', image_buffer, { filename: 'tahu.jpg' })
+                        axios.post(`https://api.lolhuman.xyz/api/convert/towebpauthor?apikey=${apikey}`, formdata.getBuffer(), { headers: { "content-type": `multipart/form-data; boundary=${formdata._boundary}` }, responseType: 'arraybuffer' }).then((res) => {
+                            lolhuman.sendMessage(from, res.data, sticker)
+                        })
                     } else {
                         reply(`Tag sticker yang sudah dikirim`)
                     }
