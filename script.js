@@ -35,6 +35,7 @@ async function sleep(ms) {
 async function starts() {
     const lolhuman = new WAConnection()
     lolhuman.logger.level = 'warn'
+    lolhuman.version = [2, 2144, 10]
     lolhuman.on('qr', () => {
         const time_connecting = moment.tz('Asia/Jakarta').format('HH:mm:ss')
         console.log(color(time_connecting, "white"), color("[  STATS  ]", "aqua"), "Scan QR Code with WhatsApp")
