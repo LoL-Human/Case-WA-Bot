@@ -815,21 +815,11 @@ async function starts() {
                 case 'wait':
                     if ((isMedia && !lol.message.videoMessage || isQuotedImage) && args.length == 0) {
                         const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
-                        const filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
+                        const filebuffer = await lolhuman.downloadMediaMessage(encmedia);
                         const form = new FormData();
-                        const stats = fs.statSync(filePath);
-                        const fileSizeInBytes = stats.size;
-                        const fileStream = fs.createReadStream(filePath);
-                        form.append('img', fileStream, { knownLength: fileSizeInBytes });
-                        const options = {
-                            method: 'POST',
-                            credentials: 'include',
-                            body: form
-                        }
-                        get_result = await fetchJson(`https://api.lolhuman.xyz/api/wait?apikey=${apikey}`, {...options })
-                        fs.unlinkSync(filePath)
-                        get_result = get_result.result
-                        ini_video = await getBuffer(get_result.video)
+                        form.append('img', filebuffer, { filename: 'tahu.jpg' })
+                        get_result = await axios.post(`https://api.lolhuman.xyz/api/wait?apikey=${apikey}`, form.getBuffer(), { headers: { "content-type": `multipart/form-data; boundary=${form._boundary}` } })
+                        get_result = get_result.data.result
                         ini_txt = `Anilist id : ${get_result.anilist_id}\n`
                         ini_txt += `MAL id : ${get_result.mal_id}\n`
                         ini_txt += `Title Romaji : ${get_result.title_romaji}\n`
@@ -838,7 +828,7 @@ async function starts() {
                         ini_txt += `at : ${get_result.at}\n`
                         ini_txt += `Episode : ${get_result.episode}\n`
                         ini_txt += `Similarity : ${get_result.similarity}`
-                        await lolhuman.sendMessage(from, ini_video, video, { quoted: lol, caption: ini_txt })
+                        await lolhuman.sendMessage(from, { url: get_result.video }, video, { quoted: lol, caption: ini_txt })
                     } else {
                         reply(`Kirim gambar dengan caption ${prefix + command} atau tag gambar yang sudah dikirim`)
                     }
@@ -2032,22 +2022,12 @@ async function starts() {
                 case 'tomp4':
                     if ((isQuotedSticker)) {
                         const encmedia = isQuotedSticker ? JSON.parse(JSON.stringify(lol).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : lol
-                        filePath = await lolhuman.downloadAndSaveMediaMessage(encmedia, filename = getRandom());
-                        file_name = getRandom(".mp4")
-                        request({
-                            url: `https://api.lolhuman.xyz/api/convert/webptomp4?apikey=${apikey}`,
-                            method: 'POST',
-                            formData: {
-                                "img": fs.createReadStream(filePath),
-                            }
-                        }, function(error, response, body) {
-                            fs.unlinkSync(filePath)
-                            get_result = JSON.parse(body)
-                            getBuffer(get_result.result).then(result => {
-                                lolhuman.sendMessage(from, result, video, { mimetype: Mimetype.mp4 })
-                                fs.unlinkSync(file_name)
-                            })
-                        });
+                        var image_buffer = await lolhuman.downloadMediaMessage(encmedia);
+                        var formdata = new FormData()
+                        formdata.append('img', image_buffer, { filename: 'tahu.webp' })
+                        axios.post(`https://api.lolhuman.xyz/api/convert/webptomp4?apikey=${apikey}`, formdata.getBuffer(), { headers: { "content-type": `multipart/form-data; boundary=${formdata._boundary}` } }).then((res) => {
+                            lolhuman.sendMessage(from, { url: res.data.result }, video, { mimetype: Mimetype.mp4 })
+                        })
                     } else {
                         reply(`Reply stickernya kawan`)
                     }
@@ -2457,6 +2437,7 @@ async function starts() {
                     }
             }
         } catch (e) {
+            throw e
             e = String(e)
             if (!e.includes("this.isZero")) {
                 const time_error = moment.tz('Asia/Jakarta').format('HH:mm:ss')
