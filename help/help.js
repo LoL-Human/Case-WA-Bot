@@ -329,7 +329,7 @@ const help = (prefix) => {
 ├ • ${prefix}nsfw_neko_gif
 ├ • ${prefix}random_hentai_gif
 │
-╰───「 LoL Human 」`
+╰───「 Akeno Bot 」`
 }
 exports.help = help
 
