@@ -426,6 +426,17 @@ async function starts() {
                     ini_txt += `Story : \n${get_result.story}`
                     reply(ini_txt)
                     break
+                case 'niatsholat':
+                     if (args.length == 0) return reply(`Example: ${prefix + command} Yogyakarta`)
+                    query = args.join(" ")
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/niatsholat/${query}?apikey=${apikey}`)
+                    get_result = get_result.result
+                    ini_txt = `Nama : ${get_result.name}\n`
+                    ini_txt += `Arab: ${get_result.ar}\n`
+                    ini_txt += `latin : ${get_result.latin}\n`
+                    ini_txt += `Indonesia : ${get_result.id}`
+                    reply(ini_txt)
+                    break
                 case 'jadwalsholat':
                     if (args.length == 0) return reply(`Example: ${prefix + command} Yogyakarta`)
                     daerah = args.join(" ")
