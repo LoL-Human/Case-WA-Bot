@@ -4,7 +4,7 @@ const {
     Presence,
     Mimetype,
     GroupSettingChange
-} = require('@adiwajshing/baileys')
+} = require('./lib/compat')
 
 const fs = require("fs")
 const FormData = require('form-data')
@@ -34,13 +34,10 @@ async function sleep(ms) {
 
 async function starts() {
     const lolhuman = new WAConnection()
-    lolhuman.logger.level = 'warn'
-    lolhuman.version = [2, 2144, 10]
     lolhuman.on('qr', () => {
         const time_connecting = moment.tz('Asia/Jakarta').format('HH:mm:ss')
         console.log(color(time_connecting, "white"), color("[  STATS  ]", "aqua"), "Scan QR Code with WhatsApp")
     })
-    fs.existsSync('./lolhuman.json') && lolhuman.loadAuthInfo('./lolhuman.json')
     if (apikey == "") {
         ini_time = moment.tz('Asia/Jakarta').format('HH:mm:ss')
         console.log(color(ini_time, "white"), color("[  ERROR  ]", "aqua"), color("Apikey is empty, please check at config.json", 'red'))
@@ -54,8 +51,7 @@ async function starts() {
         const time_connect = moment.tz('Asia/Jakarta').format('HH:mm:ss')
         console.log(color(time_connect, "white"), color("[  STATS  ]", "aqua"), "Connected")
     })
-    await lolhuman.connect({ timeoutMs: 30 * 1000 })
-    fs.writeFileSync('./lolhuman.json', JSON.stringify(lolhuman.base64EncodedAuthInfo(), null, '\t'))
+    await lolhuman.connect()
 
     lolhuman.on('group-participants-update', async(chat) => {
         try {
@@ -71,18 +67,18 @@ async function starts() {
                 var pp_group = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png?q=60'
             }
             if (chat.action == 'add') {
-                ini_user = lolhuman.contacts[mem]
+                ini_user = lolhuman.contacts[mem] || { notify: mem.split('@')[0] }
                 group_info = await lolhuman.groupMetadata(chat.jid)
                 ini_img = await getBuffer(`https://api.lolhuman.xyz/api/base/welcome?apikey=${apikey}&img1=${pp_user}&img2=${pp_group}&background=https://i.ibb.co/8B6Q84n/LTqHsfYS.jpg&username=${ini_user.notify}&member=${group_info.participants.length}&groupname= ${group_info.subject}`)
                 welkam = `${ini_user.notify}, Welkam to ${group_info.subject}`
                 await lolhuman.sendMessage(chat.jid, ini_img, MessageType.image, { caption: welkam })
             }
             if (chat.action == 'remove') {
-                ini_user = lolhuman.contacts[mem]
+                ini_user = lolhuman.contacts[mem] || { notify: mem.split('@')[0] }
                 group_info = await lolhuman.groupMetadata(chat.jid)
                 ini_img = await getBuffer(`https://api.lolhuman.xyz/api/base/leave?apikey=${apikey}&img1=${pp_user}&img2=${pp_group}&background=https://i.ibb.co/8B6Q84n/LTqHsfYS.jpg&username=${ini_user.notify}&member=${group_info.participants.length}&groupname= ${group_info.subject}`)
                 ini_out = `${ini_user.notify}, Sayonara 👋`
-                await lolhuman.sendMessage(chat.jid, ini_img, MessageType.image, { caption: welkam })
+                await lolhuman.sendMessage(chat.jid, ini_img, MessageType.image, { caption: ini_out })
             }
         } catch (e) {
             console.log('Error :', e)
@@ -100,14 +96,14 @@ async function starts() {
             global.prefix
             const content = JSON.stringify(lol.message)
             const from = lol.key.remoteJid
-            const type = Object.keys(lol.message)[0]
+            const type = Object.keys(lol.message).find(k => k !== 'senderKeyDistributionMessage' && k !== 'messageContextInfo')
             const insom = from.endsWith('@g.us')
             const nameReq = insom ? lol.participant : lol.key.remoteJid
             pushname2 = lolhuman.contacts[nameReq] != undefined ? lolhuman.contacts[nameReq].vname || lolhuman.contacts[nameReq].notify : undefined
 
             const { text, extendedText, contact, location, liveLocation, image, video, sticker, document, audio, product } = MessageType
 
-            body = (type === 'conversation' && lol.message.conversation.startsWith(prefix)) ? lol.message.conversation : (type == 'imageMessage') && lol.message.imageMessage.caption.startsWith(prefix) ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption.startsWith(prefix) ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text.startsWith(prefix) ? lol.message.extendedTextMessage.text : ''
+            body = (type === 'conversation' && lol.message.conversation.startsWith(prefix)) ? lol.message.conversation : (type == 'imageMessage') && (lol.message.imageMessage.caption || '').startsWith(prefix) ? lol.message.imageMessage.caption : (type == 'videoMessage') && (lol.message.videoMessage.caption || '').startsWith(prefix) ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && (lol.message.extendedTextMessage.text || '').startsWith(prefix) ? lol.message.extendedTextMessage.text : ''
             budy = (type === 'conversation') ? lol.message.conversation : (type === 'extendedTextMessage') ? lol.message.extendedTextMessage.text : ''
             var Link = (type === 'conversation' && lol.message.conversation) ? lol.message.conversation : (type == 'imageMessage') && lol.message.imageMessage.caption ? lol.message.imageMessage.caption : (type == 'videoMessage') && lol.message.videoMessage.caption ? lol.message.videoMessage.caption : (type == 'extendedTextMessage') && lol.message.extendedTextMessage.text ? lol.message.extendedTextMessage.text : ''
             const messagesLink = Link.slice(0).trim().split(/ +/).shift().toLowerCase()
@@ -124,7 +120,7 @@ async function starts() {
 
             const botNumber = lolhuman.user.jid
             const isGroup = from.endsWith('@g.us')
-            const sender = isGroup ? lol.participant : lol.key.remoteJid
+            const sender = isGroup ? lol.participant : (lol.key.remoteJidAlt || lol.key.remoteJid)
             const groupMetadata = isGroup ? await lolhuman.groupMetadata(from) : ''
             const groupName = isGroup ? groupMetadata.subject : ''
             const totalchat = lolhuman.chats.all()
@@ -2437,7 +2433,6 @@ async function starts() {
                     }
             }
         } catch (e) {
-            throw e
             e = String(e)
             if (!e.includes("this.isZero")) {
                 const time_error = moment.tz('Asia/Jakarta').format('HH:mm:ss')

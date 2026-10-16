@@ -1,6 +1,6 @@
 {
     "name": "bot-wa",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "description": "LoL Human case rest api",
     "main": "index.js",
     "directories": {
@@ -15,22 +15,28 @@
     ],
     "license": "ISC",
     "dependencies": {
-        "@adiwajshing/baileys": "^3.5.2",
         "async": "^3.2.0",
-        "axios": "^0.21.1",
-        "cfonts": "^2.9.0",
+        "axios": "^1.20.0",
+        "baileys": "^7.0.0-rc14",
+        "cfonts": "^3.3.1",
+        "chalk": "^4.1.2",
         "escape-string-regexp": "^4.0.0",
         "fake-useragent": "^1.0.1",
         "file-type": "^16.2.0",
         "fluent-ffmpeg": "^2.1.2",
-        "form-data": "^4.0.0",
-        "fs-extra": "^9.0.1",
-        "moment-timezone": "^0.5.32",
+        "form-data": "^4.0.6",
+        "fs-extra": "^11.4.1",
+        "moment-timezone": "^0.5.48",
         "multistream": "^4.0.1",
-        "needle": "^2.5.2",
+        "needle": "^3.5.0",
         "node-fetch": "^2.6.1",
         "performance-now": "^2.1.0",
+        "pino": "^9.14.0",
+        "qrcode-terminal": "^0.12.0",
         "request": "^2.88.2",
         "spinnies": "^0.5.1"
+    },
+    "engines": {
+        "node": ">=20.0.0"
     }
 }

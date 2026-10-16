@@ -13,3 +13,5 @@ config.json
 
 test*.*
 ocr
+# baileys multi-device session
+session/

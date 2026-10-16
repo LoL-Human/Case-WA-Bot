@@ -40,6 +40,7 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 ```cmd
 > npm start
 ```
+Scan the QR code shown in the terminal from WhatsApp (Linked devices). The login session is stored in the `session/` folder; delete it to log in with another number. Requires Node.js 20 or newer.
 
 ## Available Case
 
@@ -107,7 +108,7 @@ Edit the required value in `config.json`. You can get the api key at [`LoL Human
 * You can request a case in my [`WhatsApp`](http://wa.me/62895418200111).
 
 # Thanks To
-* [`Baileys`](https://github.com/adiwajshing/Baileys)
+* [`Baileys`](https://github.com/WhiskeySockets/Baileys)
 * [`Fxc7`](https://github.com/Fxc7)
 * [`Pais`](https://github.com/Paiiss)
 * [`MhankBarBar`](https://github.com/MhankBarBar)
