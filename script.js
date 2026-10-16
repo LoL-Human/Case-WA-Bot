@@ -19,6 +19,7 @@ const { color } = require('./lib/color')
 const { exec } = require("child_process")
 const { getRandom } = require('./lib/function')
 const { help, donate } = require('./help/help')
+const { getFeature, runFeature } = require('./lib/lolhuman-runner')
 const { exit } = require('process')
 const { default: axios } = require('axios')
 
@@ -1689,7 +1690,7 @@ async function starts() {
                     if (args.length == 0) return reply(`Example: ${prefix + command} LoL Human`)
                     ini_name = args.join(" ")
                     if (args.length == 0) return reply(`Example: ${prefix + command} LoL Human`)
-                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/tebakumur?apikey=SoftApikey&name=${ini_name}`)
+                    get_result = await fetchJson(`https://api.lolhuman.xyz/api/tebakumur?apikey=${apikey}&name=${ini_name}`)
                     get_result = get_result.result
                     ini_txt = `Nama : ${get_result.name}\n`
                     ini_txt += `Umur : ${get_result.age}`
@@ -2423,6 +2424,11 @@ async function starts() {
                     })
                     break
                 default:
+                    var lolFeature = isCmd && getFeature(command)
+                    if (lolFeature) {
+                        await runFeature(lolFeature, { conn: lolhuman, from, lol, sender, args, prefix, apikey, isOwner: sender.split('@')[0] == owner, mentionUser, reply, MessageType, Mimetype })
+                        break
+                    }
                     if (isCmd) {
                         reply(`Sorry bro, command *${prefix}${command}* gk ada di list *${prefix}help*`)
                     }
